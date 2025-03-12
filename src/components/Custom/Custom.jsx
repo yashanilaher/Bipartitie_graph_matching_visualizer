@@ -77,7 +77,12 @@ function Custom() {
         const fromNodeExists=nodes.some((node)=>node.id===fromNode);
         const toNodeExists=nodes.some((node)=>node.id===toNode);
 
-        if (fromNodeExists && toNodeExists){
+        // console.log(links);
+        const edgeExists=links.some((edge)=>(edge.source.id===fromNode && edge.target.id===toNode));
+        // console.log(edgeExists);
+
+        if (edgeExists){
+            console.log("pp");
             alert("Edge Already Present");
             return;
         }
