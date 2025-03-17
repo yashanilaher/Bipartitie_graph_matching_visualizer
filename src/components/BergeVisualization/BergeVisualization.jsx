@@ -91,7 +91,7 @@ const BergeVisualization = ({ graph }) => {
     return false;
   };
 
-  // Find augmenting path using DFS instead of BFS
+  // Find augmenting path using DFS
   const computeAugmentingPath = (currentMatching) => {
     // Start from all unmatched nodes in group "A"
     for (const node of nodes) {
@@ -183,27 +183,44 @@ const BergeVisualization = ({ graph }) => {
     
     setPrecomputedPaths(paths);
     setPrecomputedMatchings(matchings);
-    console.log("matchings", matchings);
-    console.log("paths", paths);
+    console.log("prec_matchings", matchings);
+    console.log("prec_paths", paths);
   };
 
   // Precompute steps when the graph changes or on component mount
   useEffect(() => {
     precomputeSteps();
-    // Also reset step counter and state if graph changes
+    //Also reset step counter and state if graph changes
     setStep(0);
     setMatching([]);
     setAugmentingPath([]);
   }, [graph]);
 
+
+
+
+
+
   // Instead of computing on each click, simply show the precomputed step.
   const handleNextStep = () => {
-    if (step < precomputedPaths.length) {
-      setAugmentingPath(precomputedPaths[step]);
-      setMatching(precomputedMatchings[step + 1]); // Use next matching since we've already applied the path
-      setStep(step + 1);
-    } 
-    else if (step == precomputedPaths.length) {
+    if (step < 2*precomputedPaths.length) {
+
+      if (step%2 == 0){
+        setAugmentingPath(precomputedPaths[step/2]);
+        setMatching(precomputedMatchings[ ( (step-2) / 2) + 1]);
+        setStep(step + 1);
+      }
+
+      if (step%2 == 1){
+        setMatching(precomputedMatchings[ ( (step-1) / 2) + 1]); // Use next matching since we've already applied the path
+        setAugmentingPath(precomputedPaths[(step-1)/2]);
+        setStep(step + 1);
+      }
+
+      // setStep(step + 1);
+    }
+
+    else if (step == 2 * precomputedPaths.length) {
       setAugmentingPath([]);
       setMatching(precomputedMatchings[precomputedMatchings.length - 1]); 
       setStep(step + 1);
@@ -213,7 +230,49 @@ const BergeVisualization = ({ graph }) => {
     }
   };
 
-  // Reset all states and recompute the precomputed steps.
+
+  
+  
+  const handlePreviousStep = () => {
+    let newStep = step - 1;
+
+    if (newStep >= 2*precomputedPaths.length) {
+      newStep = 2*precomputedPaths.length - 1;
+    }
+    
+
+    if (newStep >= 0) {
+      setStep(newStep);
+
+      if (newStep == 0){
+        setAugmentingPath([]);
+        setMatching([]);
+      } 
+      else if (newStep == 1){
+        setAugmentingPath(precomputedPaths[0]);
+        setMatching([]);
+      }
+
+      else if (newStep%2 == 0){
+        setAugmentingPath(precomputedPaths[newStep/2 - 1]);
+        setMatching(precomputedMatchings[ ( (newStep-2) / 2) + 1]);
+    
+      }
+      else {
+        setMatching(precomputedMatchings[ ( (newStep-1) / 2) ]); 
+        setAugmentingPath(precomputedPaths[(newStep-1)/2]);
+      }
+
+      // setStep(step + 1);
+    }
+    else{
+      alert("No steps before this.");
+    }
+  };
+  
+  
+  
+  
   const handleReset = () => {
     setStep(0);
     setMatching([]);
@@ -221,7 +280,7 @@ const BergeVisualization = ({ graph }) => {
     precomputeSteps();
   };
 
-  // Render the graph using D3
+  
   useEffect(() => {
     const width = 600,
       height = 400;
@@ -261,7 +320,6 @@ const BergeVisualization = ({ graph }) => {
           return (u === sourceId && v === targetId) || (u === targetId && v === sourceId);
         });
         
-        if (isInPath) return "green";
         
         // Check if this edge is in the current matching
         const isInMatching = matching.some(
@@ -269,8 +327,14 @@ const BergeVisualization = ({ graph }) => {
             (e.source.id === sourceId && e.target.id === targetId) || 
             (e.source.id === targetId && e.target.id === sourceId)
         );
+
+        if (isInMatching && isInPath) return "green";
         
         if (isInMatching) return "red";
+
+        if (isInPath) return "blue";
+
+
         return "#999";
       })
       .attr("stroke-width", 2);
@@ -307,14 +371,22 @@ const BergeVisualization = ({ graph }) => {
 
       svg.selectAll("text").attr("x", (d) => d.x).attr("y", (d) => d.y);
     });
-  }, [nodes, links, matching, augmentingPath]);
+  }, [nodes, links, matching, augmentingPath, step]);
 
+
+  
   return (
     <div>
       <svg ref={svgRef} style={{ border: "2px solid black" }}></svg>
-      <div style={{ marginTop: "20px", display: "flex", gap: "10px", justifyContent: "center" }}>
+      <div style={{ marginTop: "20px", display: "flex", gap: "10px",
+                   justifyContent: "center" }}>
         <button onClick={handleNextStep}>Next Step</button>
+      
+        <button onClick={() => handlePreviousStep()}>Previous Step</button>
+
+
         <button onClick={handleReset}>Reset</button>
+
       </div>
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <h3>Step {step}</h3>
@@ -342,5 +414,7 @@ const BergeVisualization = ({ graph }) => {
     </div>
   );
 };
+
+
 
 export default BergeVisualization;

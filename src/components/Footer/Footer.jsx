@@ -3,7 +3,7 @@ import React from "react";
 function Footer() {
   return (
     <footer style={styles.footer}>
-      <p style={styles.text}>© 2023 Bipartite Matching Visualizer. All rights reserved.</p>
+      <p style={styles.text}>© 2025 Bipartite Matching Visualizer. All rights reserved.</p>
     </footer>
   );
 }

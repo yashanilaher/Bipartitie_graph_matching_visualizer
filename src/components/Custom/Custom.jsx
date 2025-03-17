@@ -1,6 +1,8 @@
 import * as d3 from "d3";
 import React, { useState } from 'react'
 import { useRef,useEffect } from 'react'
+import BergeVisualization from "../BergeVisualization/BergeVisualization";
+
 
 function Custom() {
     const svgRef=useRef();
@@ -137,6 +139,7 @@ function Custom() {
             </div>
             <svg ref={svgRef} style={{ border: "2px solid black" }} className="graph"></svg>
             <h2>Visualization of Berge Algorithm</h2>
+            <BergeVisualization graph={{nodes,links}}/>
             
         </div>
 
