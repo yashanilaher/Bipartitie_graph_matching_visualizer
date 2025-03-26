@@ -2,22 +2,43 @@
   margin: 0;
   padding: 0;
 }
-.container {
+.g1-container {
+  display: flex;
+  /* height: 100vh; */
+}
+
+.g1-right {
+  background-color: #f4f4f4;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 2px solid #ccc;
+}
+
+.g1-left {
+  width: 50%;
+  padding: 20px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+}
+
+.g1-title {
   text-align: center;
-  padding: 20px;
+  margin-bottom: 10px;
 }
 
-.heading {
-  margin: 20px 0;
-  font-size: 24px;
-  font-weight: bold;
+/* Graph and visualizer styles */
+.g1-graph {
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  background-color: #fff;
 }
 
-.graph {
-  margin: 20px 0;
-  border: 2px solid black;
-}
+
+
+

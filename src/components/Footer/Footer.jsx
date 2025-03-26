@@ -1,27 +1,29 @@
 import React from "react";
+import "./Footer.css";
 
 function Footer() {
   return (
-    <footer style={styles.footer}>
-      <p style={styles.text}>© 2025 Bipartite Matching Visualizer. All rights reserved.</p>
+    <footer className="footer-footer">
+      <p className="footer-text">© 2025 AlgoPLAY. All rights reserved.</p>
+      <ul className="footer-footer-links">
+        <li>
+          <a href="/privacy" className="footer-footer-link">
+            Privacy Policy
+          </a>
+        </li>
+        <li>
+          <a href="/terms" className="footer-footer-link">
+            Terms of Service
+          </a>
+        </li>
+        <li>
+          <a href="/contact" className="footer-footer-link">
+            Contact Us
+          </a>
+        </li>
+      </ul>
     </footer>
   );
 }
-
-const styles = {
-  footer: {
-    backgroundColor: "#333",
-    color: "#fff",
-    textAlign: "center",
-    padding: "10px 0",
-    position: "fixed",
-    bottom: 0,
-    width: "100%",
-  },
-  text: {
-    margin: 0,
-    fontSize: "14px",
-  },
-};
 
 export default Footer;

@@ -1,58 +1,40 @@
+// Header.js
 import React from "react";
-import { Link,NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
+import logo from "./logo1.jpeg";
+// import "./index.css"; // Import the CSS file
+import "./Header.css";
 
 function Header() {
   return (
-    <header style={styles.header}>
-      <nav style={styles.nav}>
-        <ul style={styles.ul}>
-          <li style={styles.li}>
-            <Link to="/" style={styles.link}>Intro</Link>
-          </li>
-          <li style={styles.li}>
-            <Link to="/graph1" style={styles.link}>Graph 1</Link>
-          </li>
-          <li style={styles.li}>
-            <Link to="/graph2" style={styles.link}>Graph 2</Link>
-          </li>
-          <li style={styles.li}>
-            <Link to="/graph3" style={styles.link}>Graph 3</Link>
-          </li>
-          <li style={styles.li}>
-            <Link to="/customgraph" style={styles.link}>Custom Input Graph</Link>
-          </li>
+    <header className="header-header">
+      <nav className="header-nav">
+        <ul className="header-ul">
+          <div className="header-plate1">
+            <li className="header-li header-logo">
+              <Link to="/" className="header-logo-link">
+                <span className="header-algo">Algo</span>
+                <img
+                  src={logo} // Add correct path for the logo
+                  alt="logo"
+                  className="header-logo-img"
+                />
+                <span className="header-saurus">PLAY</span>
+              </Link>
+            </li>
+          </div>
+          <div className="header-plate2">
+            <li className="header-li">
+              <Link to="/about" className="header-link">Learn</Link>
+            </li>
+            <li className="header-li">
+              <Link to="/contact" className="header-link">Contact</Link>
+            </li>
+          </div>
         </ul>
       </nav>
     </header>
   );
 }
-
-const styles = {
-  header: {
-    backgroundColor: "#333",
-    color: "#fff",
-    padding: "10px 0",
-    textAlign: "center",
-  },
-  nav: {
-    display: "flex",
-    justifyContent: "center",
-  },
-  ul: {
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    display: "flex",
-    gap: "20px",
-  },
-  li: {
-    display: "inline",
-  },
-  link: {
-    color: "#fff",
-    textDecoration: "none",
-    fontSize: "16px",
-  },
-};
 
 export default Header;
