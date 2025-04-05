@@ -12,6 +12,8 @@ const BergeVisualization = ({ graph }) => {
   const [precomputedMatchings, setPrecomputedMatchings] = useState([]);
 
   const { nodes, links } = graph;
+  // console.log("nodes",nodes);
+  // console.log("links",links);
 
   // Helper function to find edge between two nodes
   const findEdge = (sourceId, targetId) => {
@@ -58,7 +60,7 @@ const BergeVisualization = ({ graph }) => {
       
       for (const adjacentId of adjacentNodes) {
         path.push(adjacentId);
-        
+
         // If adjacent node is unmatched, we found an augmenting path
         if (!isMatched(adjacentId, currentMatching)) {
           return true;
@@ -171,11 +173,14 @@ const BergeVisualization = ({ graph }) => {
     
     while (true) {
       const path = computeAugmentingPath(currentMatching);
+      console.log("path",path)
       if (path) {
         paths.push(path);
         currentMatching = computeNewMatching(path, currentMatching);
+        console.log("CurrentMatching",currentMatching)
         // Store a deep copy of currentMatching at this step
         matchings.push([...currentMatching]);
+        console.log("matching",matchings);
       } else {
         break;
       }
@@ -184,7 +189,8 @@ const BergeVisualization = ({ graph }) => {
     setPrecomputedPaths(paths);
     setPrecomputedMatchings(matchings);
     console.log("prec_matchings", matchings);
-    console.log("prec_paths", paths);
+    console.log("type",typeof(precomputedMatchings));
+    // console.log("prec_paths", paths);
   };
 
   // Precompute steps when the graph changes or on component mount
@@ -196,8 +202,106 @@ const BergeVisualization = ({ graph }) => {
     setAugmentingPath([]);
   }, [graph]);
 
+// #################### finding vertex cover ###################
+
+  const getMatchedPartner_vertex=(nodeId,Match)=>{
+    for(const key in Match){
+      const edge=Match[key];
+      if (edge.source.id===nodeId) return edge.target.id;
+      if (edge.target.id===nodeId) return edge.source.id;
+    }
+    return null;
+  }
 
 
+  const dfs_vertex=(node,visited,final_matching)=>{
+    if (visited.has(node.id)) return false;
+    visited.add(node.id);
+    // path.push(node);
+    // console.log("CurrNode",node)
+    if (node.group==="A"){
+      const adjacentNodes=links
+      .filter(link=>link.source.id===node.id)
+      .map(link=>link.target)
+
+      // console.log("adjanode",adjacentNodes);
+      
+      for(const adj of adjacentNodes){
+        // console.log("adj",adj.id);
+        visited.add(adj.id);
+        const partnerId=getMatchedPartner_vertex(adj.id,final_matching);
+        const partnernode=nodes.find(n=>n.id===partnerId);
+        if (partnernode && !visited.has(partnernode.id)){
+          // visited.add(partnerId);
+          if (dfs_vertex(partnernode,visited,final_matching)){
+            return true;
+          }
+        }
+      }
+    }
+    else if (node.group==="B"){
+      const partnerId=getMatchedPartner_vertex(node.id,final_matching);
+      const partnernode=nodes.find(n=>n.id===partnerId);
+      if (partnernode && !visited.has(partnernode.id)){
+        visited.add(partnerId);
+        if (dfs_vertex(partnernode,visited,final_matching)){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  const minimal_vertex_cover=()=>{
+    // console.log("pre",precomputedMatchings);
+    const final_matching=precomputedMatchings[precomputedMatchings.length-1];
+    // console.log("lastele",final_matching);
+    const LtoR={};
+    for (const key in final_matching) {
+      const {source,target}=final_matching[key];
+      LtoR[source.id] = target.id;
+    }
+    // console.log("ltor",LtoR);
+    // console.log(RtoL);
+    const unmatched_nodes = nodes.filter(n => n.group === "A" && !(n.id in LtoR));    
+    // console.log("UM",unmatched_nodes);
+    const visited = new Set();
+
+    for (const node of unmatched_nodes) {
+      dfs_vertex(node, visited,final_matching);
+    }
+    const vertex_cover=[]
+
+    // console.log("vis",visited);
+
+    // dfs ends 
+    for (const node of nodes) {
+      if (node.group === "B" && visited.has(node.id)) {
+        vertex_cover.push(node.id);
+      }
+    }
+
+    const matchedAIds=new Set();
+    for(const key in final_matching){
+      const edge=final_matching[key];
+      matchedAIds.add(edge.source.id);///grp a nodes which are in matching 
+    }
+
+    for (const node of nodes) {
+      if (node.group === "A" && !visited.has(node.id) && matchedAIds.has(node.id)) {
+        vertex_cover.push(node.id);
+      }
+    }
+
+
+
+    console.log("vertex_cover",vertex_cover);
+  }
+
+  
+  minimal_vertex_cover();
+
+  // ##################### finding vertex cover code ends here ################
 
 
 
@@ -271,8 +375,7 @@ const BergeVisualization = ({ graph }) => {
   };
   
   
-  
-  
+
   const handleReset = () => {
     setStep(0);
     setMatching([]);
@@ -372,7 +475,6 @@ const BergeVisualization = ({ graph }) => {
       svg.selectAll("text").attr("x", (d) => d.x).attr("y", (d) => d.y);
     });
   }, [nodes, links, matching, augmentingPath, step]);
-
 
   
   return (

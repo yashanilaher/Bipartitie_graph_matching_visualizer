@@ -5,24 +5,49 @@ import BergeVisualization from "../BergeVisualization/BergeVisualization";
 
 const G1 = () => {
   const svgRef = useRef();
+  // const [nodes, setNodes] = useState([
+  //   { id: "a1", group: "A" },
+  //   { id: "a2", group: "A" },
+  //   { id: "a3", group: "A" },
+  //   { id: "a4", group: "A" },
+  //   { id: "b1", group: "B" },
+  //   { id: "b2", group: "B" },
+  //   { id: "b3", group: "B" },
+  //   { id: "b4", group: "B" },
+  // ]);
   const [nodes, setNodes] = useState([
     { id: "a1", group: "A" },
     { id: "a2", group: "A" },
     { id: "a3", group: "A" },
     { id: "a4", group: "A" },
+    { id: "a5", group: "A" },
+    { id: "a6", group: "A" },
     { id: "b1", group: "B" },
     { id: "b2", group: "B" },
     { id: "b3", group: "B" },
     { id: "b4", group: "B" },
+    { id: "b5", group: "B" },
+    { id: "b6", group: "B" },
   ]);
 
+  // const [links, setLinks] = useState([
+  //   { source: "a1", target: "b1" },
+  //   { source: "a1", target: "b2" },
+  //   { source: "a2", target: "b1" },
+  //   { source: "a3", target: "b3" },
+  //   { source: "a3", target: "b4" },
+  //   { source: "a4", target: "b3" },
+  // ]);
   const [links, setLinks] = useState([
     { source: "a1", target: "b1" },
-    { source: "a1", target: "b2" },
     { source: "a2", target: "b1" },
+    { source: "a2", target: "b2" },
+    { source: "a6", target: "b2" },
     { source: "a3", target: "b3" },
-    { source: "a3", target: "b4" },
     { source: "a4", target: "b3" },
+    { source: "a4", target: "b4" },
+    { source: "a5", target: "b5" },
+    { source: "a6", target: "b4" },
   ]);
 
   useEffect(() => {
@@ -109,9 +134,9 @@ const G1 = () => {
   );
   
 }
-const styles = {
+// const styles = {
   
-};
+// };
 
 
 
