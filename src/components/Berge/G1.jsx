@@ -118,7 +118,7 @@ const G1 = () => {
   }, [nodes, links]);
 
   //callback to get maximal matching
-  const handleMatchingUpdate=(matching)=>{
+  const onFinalMatching=(matching)=>{
     setCurrentMatching((prev)=>{
       const isDiff=JSON.stringify(prev)!=JSON.stringify(matching);
       if (isDiff){
@@ -145,7 +145,7 @@ const G1 = () => {
         <h1 className="g1-title">Berge Algorithm Visualizer</h1>
         <div><BergeVisualization 
             graph={{ nodes, links }} 
-            onMatchingUpdate={handleMatchingUpdate}
+            onFinalMatching={onFinalMatching}
             /></div>
       </div>
       {/* Left content for future use */}
@@ -160,9 +160,7 @@ const G1 = () => {
   );
   
 }
-// const styles = {
-  
-// };
+
 
 
 

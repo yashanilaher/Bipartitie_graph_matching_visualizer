@@ -1,7 +1,8 @@
+// berge.jsx:(Visualizing maximal matching)
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 
-const BergeVisualization = ({ graph, onMatchingUpdate }) => {
+const BergeVisualization = ({ graph , onFinalMatching }) => {
   const svgRef = useRef();
   const [step, setStep] = useState(0);
   const [matching, setMatching] = useState([]); // Current matching
@@ -173,14 +174,14 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
     
     while (true) {
       const path = computeAugmentingPath(currentMatching);
-      // console.log("path",path);
+      console.log("path",path)
       if (path) {
         paths.push(path);
         currentMatching = computeNewMatching(path, currentMatching);
-        // console.log("CurrentMatching",currentMatching);
+        console.log("CurrentMatching",currentMatching)
         // Store a deep copy of currentMatching at this step
         matchings.push([...currentMatching]);
-        // console.log("matching",matchings);
+        console.log("matching",matchings);
       } else {
         break;
       }
@@ -189,73 +190,70 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
     setPrecomputedPaths(paths);
     setPrecomputedMatchings(matchings);
     console.log("prec_matchings", matchings);
-    // console.log("type",typeof(precomputedMatchings));
-    // if (onMatchingUpdate){
-    //   console.log("hahahaha");
-    //   onMatchingUpdate([]);
-    // }
+    console.log("type",typeof(precomputedMatchings));
+    // console.log("prec_paths", paths);
+    if (onFinalMatching && matchings.length>0){
+      console.log("hahahaha")
+      onFinalMatching(matchings[matchings.length-1]);
+    }
   };
-
-  // useEffect(()=>{
-  //   if (onMatchingUpdate){
-  //     onMatchingUpdate(matching);
-  //   }
-  // },[]);
 
   // Precompute steps when the graph changes or on component mount
   useEffect(() => {
     precomputeSteps();
     //Also reset step counter and state if graph changes
-    // onMatchingUpdate(precomputedMatchings[precomputedMatchings.length()-1]);
     setStep(0);
     setMatching([]);
     setAugmentingPath([]);
   }, [graph]);
 
+  // useEffect(() => {
+  //   if (onFinalMatching && precomputedMatchings.length > 0) {
+  //     console.log("hahahaha");
+  //     onFinalMatching(precomputedMatchings[precomputedMatchings.length - 1]);
+  //   }
+  // }, [precomputedMatchings, onFinalMatching]);
+
+
   // Instead of computing on each click, simply show the precomputed step.
   const handleNextStep = () => {
     if (step < 2*precomputedPaths.length) {
+
       if (step%2 == 0){
-        const newMatching = precomputedMatchings[((step-2) / 2) + 1] || [];
         setAugmentingPath(precomputedPaths[step/2]);
-        setMatching(newMatching);
-        // if (onMatchingUpdate){
-        //   console.log("Next Step, Step:", step, "Matching:", newMatching);
-        //   onMatchingUpdate(newMatching);
-        // }
+        setMatching(precomputedMatchings[ ( (step-2) / 2) + 1]);
         setStep(step + 1);
       }
 
       if (step%2 == 1){
-        const newMatching = precomputedMatchings[((step-1) / 2) + 1] || [];
-        setMatching(newMatching);
+        setMatching(precomputedMatchings[ ( (step-1) / 2) + 1]); // Use next matching since we've already applied the path
         setAugmentingPath(precomputedPaths[(step-1)/2]);
-        // if (onMatchingUpdate){
-        //   console.log("Next Step, Step:", step, "Matching:", newMatching);
-        //   onMatchingUpdate(newMatching);
-        // }
         setStep(step + 1);
       }
-    } else if (step == 2 * precomputedPaths.length) {
-      const finalMatching = precomputedMatchings[precomputedMatchings.length - 1] || [];
+
+      // setStep(step + 1);
+    }
+
+    else if (step == 2 * precomputedPaths.length) {
       setAugmentingPath([]);
-      setMatching(finalMatching);
-      // if (onMatchingUpdate){
-      //   console.log("Next Step, Final Step:", step, "Matching:", finalMatching);
-      //   onMatchingUpdate(finalMatching);
-      // }
+      setMatching(precomputedMatchings[precomputedMatchings.length - 1]); 
       setStep(step + 1);
-    } else {
+    }
+    else{
       alert("No more steps available. Maximum matching reached!");
     }
   };
 
+
+  
+  
   const handlePreviousStep = () => {
     let newStep = step - 1;
 
     if (newStep >= 2*precomputedPaths.length) {
       newStep = 2*precomputedPaths.length - 1;
     }
+    
 
     if (newStep >= 0) {
       setStep(newStep);
@@ -263,38 +261,30 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
       if (newStep == 0){
         setAugmentingPath([]);
         setMatching([]);
-        // if (onMatchingUpdate) {
-        //   console.log("Previous Step, Step:", newStep, "Matching: []");
-        //   onMatchingUpdate([]);
-        // }
-      } else if (newStep == 1){
+      } 
+      else if (newStep == 1){
         setAugmentingPath(precomputedPaths[0]);
         setMatching([]);
-        // if (onMatchingUpdate) {
-        //   console.log("Previous Step, Step:", newStep, "Matching: []");
-        //   onMatchingUpdate([]);
-        // }
-      } else if (newStep%2 == 0){
-        const newMatching = precomputedMatchings[((newStep-2) / 2) + 1] || [];
-        setAugmentingPath(precomputedPaths[newStep/2 - 1]);
-        setMatching(newMatching);
-        // if (onMatchingUpdate) {
-        //   console.log("Previous Step, Step:", newStep, "Matching:", newMatching);
-        //   onMatchingUpdate(newMatching);
-        // }
-      } else {
-        const newMatching = precomputedMatchings[((newStep-1) / 2)] || [];
-        setMatching(newMatching);
-        setAugmentingPath(precomputedPaths[(newStep-1)/2]);
-        // if (onMatchingUpdate) {
-        //   console.log("Previous Step, Step:", newStep, "Matching:", newMatching);
-        //   onMatchingUpdate(newMatching);
-        // }
       }
-    } else {
+
+      else if (newStep%2 == 0){
+        setAugmentingPath(precomputedPaths[newStep/2 - 1]);
+        setMatching(precomputedMatchings[ ( (newStep-2) / 2) + 1]);
+    
+      }
+      else {
+        setMatching(precomputedMatchings[ ( (newStep-1) / 2) ]); 
+        setAugmentingPath(precomputedPaths[(newStep-1)/2]);
+      }
+
+      // setStep(step + 1);
+    }
+    else{
       alert("No steps before this.");
     }
   };
+  
+  
 
   const handleReset = () => {
     setStep(0);
@@ -303,6 +293,7 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
     precomputeSteps();
   };
 
+  
   useEffect(() => {
     const width = 600,
       height = 400;
@@ -342,6 +333,7 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
           return (u === sourceId && v === targetId) || (u === targetId && v === sourceId);
         });
         
+        
         // Check if this edge is in the current matching
         const isInMatching = matching.some(
           (e) => 
@@ -354,6 +346,7 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
         if (isInMatching) return "red";
 
         if (isInPath) return "blue";
+
 
         return "#999";
       })
@@ -393,6 +386,7 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
     });
   }, [nodes, links, matching, augmentingPath, step]);
 
+  
   return (
     <div>
       <svg ref={svgRef} style={{ border: "2px solid black" }}></svg>
@@ -402,7 +396,9 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
       
         <button onClick={() => handlePreviousStep()}>Previous Step</button>
 
+
         <button onClick={handleReset}>Reset</button>
+
       </div>
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <h3>Step {step}</h3>
@@ -430,5 +426,7 @@ const BergeVisualization = ({ graph, onMatchingUpdate }) => {
     </div>
   );
 };
+
+
 
 export default BergeVisualization;
