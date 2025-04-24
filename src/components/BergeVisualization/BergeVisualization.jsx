@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 
-const BergeVisualization = ({ graph }) => {
+const BergeVisualization = ({ graph, onMatchingUpdate }) => {
   const svgRef = useRef();
   const [step, setStep] = useState(0);
   const [matching, setMatching] = useState([]); // Current matching
@@ -173,14 +173,14 @@ const BergeVisualization = ({ graph }) => {
     
     while (true) {
       const path = computeAugmentingPath(currentMatching);
-      console.log("path",path)
+      // console.log("path",path);
       if (path) {
         paths.push(path);
         currentMatching = computeNewMatching(path, currentMatching);
-        console.log("CurrentMatching",currentMatching)
+        // console.log("CurrentMatching",currentMatching);
         // Store a deep copy of currentMatching at this step
         matchings.push([...currentMatching]);
-        console.log("matching",matchings);
+        // console.log("matching",matchings);
       } else {
         break;
       }
@@ -189,161 +189,73 @@ const BergeVisualization = ({ graph }) => {
     setPrecomputedPaths(paths);
     setPrecomputedMatchings(matchings);
     console.log("prec_matchings", matchings);
-    console.log("type",typeof(precomputedMatchings));
-    // console.log("prec_paths", paths);
+    // console.log("type",typeof(precomputedMatchings));
+    // if (onMatchingUpdate){
+    //   console.log("hahahaha");
+    //   onMatchingUpdate([]);
+    // }
   };
+
+  // useEffect(()=>{
+  //   if (onMatchingUpdate){
+  //     onMatchingUpdate(matching);
+  //   }
+  // },[]);
 
   // Precompute steps when the graph changes or on component mount
   useEffect(() => {
     precomputeSteps();
     //Also reset step counter and state if graph changes
+    // onMatchingUpdate(precomputedMatchings[precomputedMatchings.length()-1]);
     setStep(0);
     setMatching([]);
     setAugmentingPath([]);
   }, [graph]);
 
-// #################### finding vertex cover ###################
-
-  const getMatchedPartner_vertex=(nodeId,Match)=>{
-    for(const key in Match){
-      const edge=Match[key];
-      if (edge.source.id===nodeId) return edge.target.id;
-      if (edge.target.id===nodeId) return edge.source.id;
-    }
-    return null;
-  }
-
-
-  const dfs_vertex=(node,visited,final_matching)=>{
-    if (visited.has(node.id)) return false;
-    visited.add(node.id);
-    // path.push(node);
-    // console.log("CurrNode",node)
-    if (node.group==="A"){
-      const adjacentNodes=links
-      .filter(link=>link.source.id===node.id)
-      .map(link=>link.target)
-
-      // console.log("adjanode",adjacentNodes);
-      
-      for(const adj of adjacentNodes){
-        // console.log("adj",adj.id);
-        visited.add(adj.id);
-        const partnerId=getMatchedPartner_vertex(adj.id,final_matching);
-        const partnernode=nodes.find(n=>n.id===partnerId);
-        if (partnernode && !visited.has(partnernode.id)){
-          // visited.add(partnerId);
-          if (dfs_vertex(partnernode,visited,final_matching)){
-            return true;
-          }
-        }
-      }
-    }
-    else if (node.group==="B"){
-      const partnerId=getMatchedPartner_vertex(node.id,final_matching);
-      const partnernode=nodes.find(n=>n.id===partnerId);
-      if (partnernode && !visited.has(partnernode.id)){
-        visited.add(partnerId);
-        if (dfs_vertex(partnernode,visited,final_matching)){
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  const minimal_vertex_cover=()=>{
-    // console.log("pre",precomputedMatchings);
-    const final_matching=precomputedMatchings[precomputedMatchings.length-1];
-    // console.log("lastele",final_matching);
-    const LtoR={};
-    for (const key in final_matching) {
-      const {source,target}=final_matching[key];
-      LtoR[source.id] = target.id;
-    }
-    // console.log("ltor",LtoR);
-    // console.log(RtoL);
-    const unmatched_nodes = nodes.filter(n => n.group === "A" && !(n.id in LtoR));    
-    // console.log("UM",unmatched_nodes);
-    const visited = new Set();
-
-    for (const node of unmatched_nodes) {
-      dfs_vertex(node, visited,final_matching);
-    }
-    const vertex_cover=[]
-
-    // console.log("vis",visited);
-
-    // dfs ends 
-    for (const node of nodes) {
-      if (node.group === "B" && visited.has(node.id)) {
-        vertex_cover.push(node.id);
-      }
-    }
-
-    const matchedAIds=new Set();
-    for(const key in final_matching){
-      const edge=final_matching[key];
-      matchedAIds.add(edge.source.id);///grp a nodes which are in matching 
-    }
-
-    for (const node of nodes) {
-      if (node.group === "A" && !visited.has(node.id) && matchedAIds.has(node.id)) {
-        vertex_cover.push(node.id);
-      }
-    }
-
-
-
-    console.log("vertex_cover",vertex_cover);
-  }
-
-  
-  minimal_vertex_cover();
-
-  // ##################### finding vertex cover code ends here ################
-
-
-
   // Instead of computing on each click, simply show the precomputed step.
   const handleNextStep = () => {
     if (step < 2*precomputedPaths.length) {
-
       if (step%2 == 0){
+        const newMatching = precomputedMatchings[((step-2) / 2) + 1] || [];
         setAugmentingPath(precomputedPaths[step/2]);
-        setMatching(precomputedMatchings[ ( (step-2) / 2) + 1]);
+        setMatching(newMatching);
+        // if (onMatchingUpdate){
+        //   console.log("Next Step, Step:", step, "Matching:", newMatching);
+        //   onMatchingUpdate(newMatching);
+        // }
         setStep(step + 1);
       }
 
       if (step%2 == 1){
-        setMatching(precomputedMatchings[ ( (step-1) / 2) + 1]); // Use next matching since we've already applied the path
+        const newMatching = precomputedMatchings[((step-1) / 2) + 1] || [];
+        setMatching(newMatching);
         setAugmentingPath(precomputedPaths[(step-1)/2]);
+        // if (onMatchingUpdate){
+        //   console.log("Next Step, Step:", step, "Matching:", newMatching);
+        //   onMatchingUpdate(newMatching);
+        // }
         setStep(step + 1);
       }
-
-      // setStep(step + 1);
-    }
-
-    else if (step == 2 * precomputedPaths.length) {
+    } else if (step == 2 * precomputedPaths.length) {
+      const finalMatching = precomputedMatchings[precomputedMatchings.length - 1] || [];
       setAugmentingPath([]);
-      setMatching(precomputedMatchings[precomputedMatchings.length - 1]); 
+      setMatching(finalMatching);
+      // if (onMatchingUpdate){
+      //   console.log("Next Step, Final Step:", step, "Matching:", finalMatching);
+      //   onMatchingUpdate(finalMatching);
+      // }
       setStep(step + 1);
-    }
-    else{
+    } else {
       alert("No more steps available. Maximum matching reached!");
     }
   };
 
-
-  
-  
   const handlePreviousStep = () => {
     let newStep = step - 1;
 
     if (newStep >= 2*precomputedPaths.length) {
       newStep = 2*precomputedPaths.length - 1;
     }
-    
 
     if (newStep >= 0) {
       setStep(newStep);
@@ -351,30 +263,38 @@ const BergeVisualization = ({ graph }) => {
       if (newStep == 0){
         setAugmentingPath([]);
         setMatching([]);
-      } 
-      else if (newStep == 1){
+        // if (onMatchingUpdate) {
+        //   console.log("Previous Step, Step:", newStep, "Matching: []");
+        //   onMatchingUpdate([]);
+        // }
+      } else if (newStep == 1){
         setAugmentingPath(precomputedPaths[0]);
         setMatching([]);
-      }
-
-      else if (newStep%2 == 0){
+        // if (onMatchingUpdate) {
+        //   console.log("Previous Step, Step:", newStep, "Matching: []");
+        //   onMatchingUpdate([]);
+        // }
+      } else if (newStep%2 == 0){
+        const newMatching = precomputedMatchings[((newStep-2) / 2) + 1] || [];
         setAugmentingPath(precomputedPaths[newStep/2 - 1]);
-        setMatching(precomputedMatchings[ ( (newStep-2) / 2) + 1]);
-    
-      }
-      else {
-        setMatching(precomputedMatchings[ ( (newStep-1) / 2) ]); 
+        setMatching(newMatching);
+        // if (onMatchingUpdate) {
+        //   console.log("Previous Step, Step:", newStep, "Matching:", newMatching);
+        //   onMatchingUpdate(newMatching);
+        // }
+      } else {
+        const newMatching = precomputedMatchings[((newStep-1) / 2)] || [];
+        setMatching(newMatching);
         setAugmentingPath(precomputedPaths[(newStep-1)/2]);
+        // if (onMatchingUpdate) {
+        //   console.log("Previous Step, Step:", newStep, "Matching:", newMatching);
+        //   onMatchingUpdate(newMatching);
+        // }
       }
-
-      // setStep(step + 1);
-    }
-    else{
+    } else {
       alert("No steps before this.");
     }
   };
-  
-  
 
   const handleReset = () => {
     setStep(0);
@@ -383,7 +303,6 @@ const BergeVisualization = ({ graph }) => {
     precomputeSteps();
   };
 
-  
   useEffect(() => {
     const width = 600,
       height = 400;
@@ -423,7 +342,6 @@ const BergeVisualization = ({ graph }) => {
           return (u === sourceId && v === targetId) || (u === targetId && v === sourceId);
         });
         
-        
         // Check if this edge is in the current matching
         const isInMatching = matching.some(
           (e) => 
@@ -436,7 +354,6 @@ const BergeVisualization = ({ graph }) => {
         if (isInMatching) return "red";
 
         if (isInPath) return "blue";
-
 
         return "#999";
       })
@@ -476,7 +393,6 @@ const BergeVisualization = ({ graph }) => {
     });
   }, [nodes, links, matching, augmentingPath, step]);
 
-  
   return (
     <div>
       <svg ref={svgRef} style={{ border: "2px solid black" }}></svg>
@@ -486,9 +402,7 @@ const BergeVisualization = ({ graph }) => {
       
         <button onClick={() => handlePreviousStep()}>Previous Step</button>
 
-
         <button onClick={handleReset}>Reset</button>
-
       </div>
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <h3>Step {step}</h3>
@@ -516,7 +430,5 @@ const BergeVisualization = ({ graph }) => {
     </div>
   );
 };
-
-
 
 export default BergeVisualization;
