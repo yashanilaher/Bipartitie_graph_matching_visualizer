@@ -3,61 +3,62 @@ import { useRef, useEffect, useState,useMemo } from "react";
 import BergeVisualization from "../BergeVisualization/BergeVisualization";
 // import "./G1.css"; // Add CSS file for layout
 import VertexCoverVisualization from "../BergeVisualization/VertexCoverVisualization";
+import BergeAlgorithm from '../BergeVisualization/BergeAlgorithm';
 
 const G1 = () => {
   const [currentMatching, setCurrentMatching] = useState([]);
   const svgRef = useRef();
-  // const [nodes, setNodes] = useState([
-  //   { id: "a1", group: "A" },
-  //   { id: "a2", group: "A" },
-  //   { id: "a3", group: "A" },
-  //   { id: "a4", group: "A" },
-  //   { id: "b1", group: "B" },
-  //   { id: "b2", group: "B" },
-  //   { id: "b3", group: "B" },
-  //   { id: "b4", group: "B" },
-  // ]);
-
   const [nodes, setNodes] = useState([
     { id: "a1", group: "A" },
     { id: "a2", group: "A" },
     { id: "a3", group: "A" },
     { id: "a4", group: "A" },
-    // { id: "a5", group: "A" },
-    { id: "a6", group: "A" },
     { id: "b1", group: "B" },
     { id: "b2", group: "B" },
     { id: "b3", group: "B" },
     { id: "b4", group: "B" },
-    // { id: "b5", group: "B" },
-    // { id: "b6", group: "B" },
   ]);
 
-  // const [links, setLinks] = useState([
-  //   { source: "a1", target: "b1" },
-  //   { source: "a1", target: "b2" },
-  //   { source: "a2", target: "b1" },
-  //   { source: "a3", target: "b3" },
-  //   { source: "a3", target: "b4" },
-  //   { source: "a4", target: "b3" },
+  // const [nodes, setNodes] = useState([
+  //   { id: "a1", group: "A" },
+  //   { id: "a2", group: "A" },
+  //   { id: "a3", group: "A" },
+  //   { id: "a4", group: "A" },
+    // { id: "a5", group: "A" },
+    // { id: "a6", group: "A" },
+    // { id: "b1", group: "B" },
+    // { id: "b2", group: "B" },
+    // { id: "b3", group: "B" },
+    // { id: "b4", group: "B" },
+    // { id: "b5", group: "B" },
+    // { id: "b6", group: "B" },
   // ]);
+
   const [links, setLinks] = useState([
     { source: "a1", target: "b1" },
+    { source: "a1", target: "b2" },
     { source: "a2", target: "b1" },
-    { source: "a2", target: "b2" },
-    { source: "a6", target: "b2" },
     { source: "a3", target: "b3" },
+    { source: "a3", target: "b4" },
     { source: "a4", target: "b3" },
-    { source: "a4", target: "b4" },
-    // { source: "a5", target: "b5" },
-    { source: "a6", target: "b4" },
   ]);
+  // const [links, setLinks] = useState([
+  //   { source: "a1", target: "b1" },
+  //   { source: "a2", target: "b1" },
+  //   { source: "a2", target: "b2" },
+  //   { source: "a6", target: "b2" },
+  //   { source: "a3", target: "b3" },
+  //   { source: "a4", target: "b3" },
+  //   { source: "a4", target: "b4" },
+    // { source: "a5", target: "b5" },
+  //   { source: "a6", target: "b4" },
+  // ]);
 
   const graph=useMemo(()=>({nodes,links}),[nodes,links]);
 
   useEffect(() => {
-    const width = 400,
-      height = 200;
+    const width = 600,
+      height = 400;
     const svg = d3
       .select(svgRef.current)
       .attr("width", width)
@@ -142,19 +143,45 @@ const G1 = () => {
           style={{ border: "2px solid black" }}
           className="g1-graph"
         ></svg>
-        <h1 className="g1-title">Berge Algorithm Visualizer</h1>
+        <h1 className="g1-title">Berge's Algorithm Visualizer</h1>
         <div><BergeVisualization 
             graph={{ nodes, links }} 
             onFinalMatching={onFinalMatching}
-            /></div>
+            />
+        </div>
+        <div className="legends-left">
+          <div className="legend-line">
+            <span className="legend-item">
+              <span className="legend-dot blue-dot"></span> Augmenting Path
+            </span>
+            <span className="legend-item">
+              <span className="legend-dot green-dot"></span> Matching in Augmenting Path
+            </span>
+            <span className="legend-item">
+              <span className="legend-dot red-dot"></span> Matching
+            </span>
+          </div>
+        </div>
       </div>
       {/* Left content for future use */}
       <div className="g1-right">
+        <BergeAlgorithm/>
+
         <h1 className="g1-placeholder">Vertex Cover</h1>
         <VertexCoverVisualization
           graph={{nodes,links}}
           maximalMatching={currentMatching}
         />
+        <div className="legends-right">
+          <div className="legend-line">
+            <span className="legend-item">
+              <span className="legend-dot red-dot"></span>Vertices in Vertex Cover From A part
+            </span>
+            <span className="legend-item">
+              <span className="legend-dot green-dot"></span>Vertices in Vertex Cover From B part
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -170,13 +170,12 @@ const VertexCoverVisualization = ({ graph, maximalMatching }) => {
 
   return (
     <div>
-      <h3>Vertex Cover Visualization</h3>
       <svg ref={svgRef} style={{ border: "2px solid black" }}></svg>
       <div style={{ marginTop: "20px", textAlign: "center" }}>
-        <p>
+        <p className="pp1">
           Vertex Cover: {vertexCover.length > 0 ? vertexCover.join(", ") : "None"}
         </p>
-        <p>Size: {vertexCover.length}</p>
+        <p className="pp2">Size: {vertexCover.length}</p>
       </div>
     </div>
   );

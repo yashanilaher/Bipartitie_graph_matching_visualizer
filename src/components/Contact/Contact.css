@@ -1,0 +1,50 @@
+.Creators {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    flex-wrap: wrap;
+    padding: 40px;
+    background: linear-gradient(135deg, #f0f4ff, #e3eafc);
+    min-height: 67.5vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .Creator-Card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 350px;
+    margin-top: -10px;
+  }
+  
+  .Creator-Card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+  }
+  
+  .image img {
+    width: 200px;
+    height: 200px;
+    border-radius: 20%;
+    object-fit: cover;
+    border: 4px solid #4a90e2;
+    margin-bottom: 20px;
+  }
+  
+  .About h1 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .About h2 {
+    font-size: 16px;
+    color: #666;
+    margin: 5px 0;
+  }
+  
