@@ -4,6 +4,9 @@ import BergeVisualization from "../BergeVisualization/BergeVisualization";
 // import "./G1.css"; // Add CSS file for layout
 import VertexCoverVisualization from "../BergeVisualization/VertexCoverVisualization";
 import BergeAlgorithm from '../BergeVisualization/BergeAlgorithm';
+import { toast } from "react-toastify";
+
+
 
 const G1 = () => {
   const [currentMatching, setCurrentMatching] = useState([]);
@@ -13,10 +16,12 @@ const G1 = () => {
     { id: "a2", group: "A" },
     { id: "a3", group: "A" },
     { id: "a4", group: "A" },
+    // { id: "a5", group: "A" },
     { id: "b1", group: "B" },
     { id: "b2", group: "B" },
     { id: "b3", group: "B" },
     { id: "b4", group: "B" },
+    // { id: "b5", group: "B" },
   ]);
 
   // const [nodes, setNodes] = useState([
@@ -41,6 +46,8 @@ const G1 = () => {
     { source: "a3", target: "b3" },
     { source: "a3", target: "b4" },
     { source: "a4", target: "b3" },
+    // { source: "a4", target: "b5" },
+    // { source: "a5", target: "b4" },
   ]);
   // const [links, setLinks] = useState([
   //   { source: "a1", target: "b1" },
@@ -168,11 +175,17 @@ const G1 = () => {
         <BergeAlgorithm/>
 
         <h1 className="g1-placeholder">Vertex Cover</h1>
-        <VertexCoverVisualization
-          graph={{nodes,links}}
-          maximalMatching={currentMatching}
-        />
-        <div className="legends-right">
+        {currentMatching.length===0 ? (
+          <div style={{marginTop:"20px",fontStyle:"italic",color:"gray"}}>
+            Please Complete the Visualization to see the vertex cover
+          </div>
+        ) : (
+          <VertexCoverVisualization
+            graph={{nodes,links}}
+            maximalMatching={currentMatching}
+          />
+        )}
+        {/* <div className="legends-right">
           <div className="legend-line">
             <span className="legend-item">
               <span className="legend-dot red-dot"></span>Vertices in Vertex Cover From A part
@@ -181,7 +194,7 @@ const G1 = () => {
               <span className="legend-dot green-dot"></span>Vertices in Vertex Cover From B part
             </span>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

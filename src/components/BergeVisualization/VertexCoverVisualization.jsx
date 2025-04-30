@@ -6,83 +6,70 @@ const VertexCoverVisualization = ({ graph, maximalMatching }) => {
   const { nodes, links } = graph;
   const [vertexCover, setVertexCover] = useState([]);
 
-  // Helper to get matched partner
-  const getMatchedPartnerVertex = (nodeId, match) => {
-    for (const edge of match) {
-      if (edge.source.id === nodeId) return edge.target.id;
-      if (edge.target.id === nodeId) return edge.source.id;
-    }
-    return null;
-  };
 
   // DFS for vertex cover
   const dfsVertex = (node, visited, finalMatching) => {
     if (visited.has(node.id)) return;
     visited.add(node.id);
 
-    if (node.group === "A") {
-      const adjacentNodes = links
-        .filter((link) => link.source.id === node.id)
-        .map((link) => link.target);
+    if (node.group==="A"){
+      const unmatchedEdges=links.filter((link)=>{
+        const isMatching=finalMatching.some(
+          (m)=>
+            (m.source.id===link.source.id && m.target.id===link.target.id) ||
+            (m.source.id===link.target.id && m.target.id===link.source.id)
+          
+        );
+        return(
+          link.source.id==node.id && !isMatching && link.target.group==="B"
+        );
+      });
 
-      for (const adj of adjacentNodes) {
-        if (!visited.has(adj.id)) {
-          visited.add(adj.id);
-          const partnerId = getMatchedPartnerVertex(adj.id, finalMatching);
-          const partnerNode = nodes.find((n) => n.id === partnerId);
-          if (partnerNode && !visited.has(partnerNode.id)) {
-            dfsVertex(partnerNode, visited, finalMatching);
-          }
-        }
+      for (const link of unmatchedEdges){
+        const bNode=link.target
+        dfsVertex(bNode,visited,finalMatching);
       }
-    } else if (node.group === "B") {
-      const partnerId = getMatchedPartnerVertex(node.id, finalMatching);
-      const partnerNode = nodes.find((n) => n.id === partnerId);
-      if (partnerNode && !visited.has(partnerNode.id)) {
-        dfsVertex(partnerNode, visited, finalMatching);
+    }
+    else if(node.group=="B"){
+      const matchedEdge=finalMatching.find(
+        (m)=>m.target.id===node.id || m.source.id===node.id
+      );
+      if (matchedEdge){
+        const aNode=matchedEdge.source.group==="A" ? matchedEdge.source : matchedEdge.target;
+        dfsVertex(aNode,visited,finalMatching);
       }
     }
   };
 
-  // Compute minimal vertex cover
+  // // Compute minimal vertex cover
   const minimalVertexCover = (finalMatching) => {
-    const LtoR = {};
-    for (const edge of finalMatching) {
-      // Assume source is A and target is B (from BergeVisualization)
-      LtoR[edge.source.id] = edge.target.id;
-    }
+    const matchedA=new Set(
+      finalMatching.map((edge)=>edge.source.group==="A" ? edge.source.id : edge.target.id)
+    )
 
     const unmatchedNodes = nodes.filter(
-      (n) => n.group === "A" && !(n.id in LtoR)
+      (node) => node.group === "A" && !(matchedA.has(node.id))
     );
+
     const visited = new Set();
 
     for (const node of unmatchedNodes) {
       dfsVertex(node, visited, finalMatching);
     }
 
-    const vertexCover = [];
+    const Cover = [];
 
-    // Add visited B nodes
-    for (const node of nodes) {
-      if (node.group === "B" && visited.has(node.id)) {
-        vertexCover.push(node.id);
+    //vertex Cover = A-Visited A + Visited B
+    for(const node of nodes){
+      if (node.group==="A" && !visited.has(node.id) && matchedA.has(node.id)){
+        Cover.push(node.id);
+      }
+      if (node.group==="B" && visited.has(node.id)){
+        Cover.push(node.id);
       }
     }
 
-    // Add unvisited matched A nodes
-    const matchedAIds = new Set(finalMatching.map((edge) => edge.source.id));
-    for (const node of nodes) {
-      if (
-        node.group === "A" &&
-        !visited.has(node.id) &&
-        matchedAIds.has(node.id)
-      ) {
-        vertexCover.push(node.id);
-      }
-    }
-
-    setVertexCover(vertexCover);
+    setVertexCover(Cover);
     console.log("vertex_cover", vertexCover);
   };
 
@@ -90,6 +77,7 @@ const VertexCoverVisualization = ({ graph, maximalMatching }) => {
   useEffect(() => {
     if (maximalMatching.length > 0) {
       minimalVertexCover(maximalMatching);
+      // setVertexCover([]);
     } else {
       setVertexCover([]); // Clear vertex cover if no matching
     }
@@ -177,6 +165,16 @@ const VertexCoverVisualization = ({ graph, maximalMatching }) => {
         </p>
         <p className="pp2">Size: {vertexCover.length}</p>
       </div>
+      <div className="legends-right">
+          <div className="legend-line">
+            <span className="legend-item">
+              <span className="legend-dot red-dot"></span>Vertices in Vertex Cover From A part
+            </span>
+            <span className="legend-item">
+              <span className="legend-dot green-dot"></span>Vertices in Vertex Cover From B part
+            </span>
+          </div>
+        </div>
     </div>
   );
 };

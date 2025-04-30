@@ -1,20 +1,43 @@
 import * as d3 from "d3";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState,useMemo } from "react";
 import BergeVisualization from "../BergeVisualization/BergeVisualization";
-// import "./G4.css"; // Add CSS file for layout
+// import "./G1.css"; // Add CSS file for layout
+import VertexCoverVisualization from "../BergeVisualization/VertexCoverVisualization";
+import BergeAlgorithm from '../BergeVisualization/BergeAlgorithm';
+import { toast } from "react-toastify";
 
-const G4 = () => {
+
+
+const G1 = () => {
+  const [currentMatching, setCurrentMatching] = useState([]);
   const svgRef = useRef();
   const [nodes, setNodes] = useState([
     { id: "a1", group: "A" },
     { id: "a2", group: "A" },
     { id: "a3", group: "A" },
     { id: "a4", group: "A" },
+    // { id: "a5", group: "A" },
     { id: "b1", group: "B" },
     { id: "b2", group: "B" },
     { id: "b3", group: "B" },
     { id: "b4", group: "B" },
+    // { id: "b5", group: "B" },
   ]);
+
+  // const [nodes, setNodes] = useState([
+  //   { id: "a1", group: "A" },
+  //   { id: "a2", group: "A" },
+  //   { id: "a3", group: "A" },
+  //   { id: "a4", group: "A" },
+    // { id: "a5", group: "A" },
+    // { id: "a6", group: "A" },
+    // { id: "b1", group: "B" },
+    // { id: "b2", group: "B" },
+    // { id: "b3", group: "B" },
+    // { id: "b4", group: "B" },
+    // { id: "b5", group: "B" },
+    // { id: "b6", group: "B" },
+  // ]);
 
   const [links, setLinks] = useState([
     { source: "a1", target: "b1" },
@@ -23,11 +46,26 @@ const G4 = () => {
     { source: "a3", target: "b3" },
     { source: "a3", target: "b4" },
     { source: "a4", target: "b3" },
+    // { source: "a4", target: "b5" },
+    // { source: "a5", target: "b4" },
   ]);
+  // const [links, setLinks] = useState([
+  //   { source: "a1", target: "b1" },
+  //   { source: "a2", target: "b1" },
+  //   { source: "a2", target: "b2" },
+  //   { source: "a6", target: "b2" },
+  //   { source: "a3", target: "b3" },
+  //   { source: "a4", target: "b3" },
+  //   { source: "a4", target: "b4" },
+    // { source: "a5", target: "b5" },
+  //   { source: "a6", target: "b4" },
+  // ]);
+
+  const graph=useMemo(()=>({nodes,links}),[nodes,links]);
 
   useEffect(() => {
-    const width = 400,
-      height = 200;
+    const width = 600,
+      height = 400;
     const svg = d3
       .select(svgRef.current)
       .attr("width", width)
@@ -86,6 +124,20 @@ const G4 = () => {
         .attr("y", (d) => d.y);
     });
   }, [nodes, links]);
+
+  //callback to get maximal matching
+  const onFinalMatching=(matching)=>{
+    setCurrentMatching((prev)=>{
+      const isDiff=JSON.stringify(prev)!=JSON.stringify(matching);
+      if (isDiff){
+        console.log("Received Currect Matching", matching);
+        return matching;
+      }
+      else{
+        return prev;
+      }
+    })
+  }
   
   return (  
     <div className="g1-container">
@@ -98,21 +150,58 @@ const G4 = () => {
           style={{ border: "2px solid black" }}
           className="g1-graph"
         ></svg>
-        <h1 className="g1-title">Berge Algorithm Visualizer</h1>
-        <div><BergeVisualization graph={{ nodes, links }} /></div>
+        <h1 className="g1-title">Berge's Algorithm Visualizer</h1>
+        <div><BergeVisualization 
+            graph={{ nodes, links }} 
+            onFinalMatching={onFinalMatching}
+            />
+        </div>
+        <div className="legends-left">
+          <div className="legend-line">
+            <span className="legend-item">
+              <span className="legend-dot blue-dot"></span> Augmenting Path
+            </span>
+            <span className="legend-item">
+              <span className="legend-dot green-dot"></span> Matching in Augmenting Path
+            </span>
+            <span className="legend-item">
+              <span className="legend-dot red-dot"></span> Matching
+            </span>
+          </div>
+        </div>
       </div>
       {/* Left content for future use */}
       <div className="g1-right">
-        <h2 className="g1-placeholder">Left Space (For Future Work)</h2>
+        <BergeAlgorithm/>
+
+        <h1 className="g1-placeholder">Vertex Cover</h1>
+        {currentMatching.length===0 ? (
+          <div style={{marginTop:"20px",fontStyle:"italic",color:"gray"}}>
+            Please Complete the Visualization to see the vertex cover
+          </div>
+        ) : (
+          <VertexCoverVisualization
+            graph={{nodes,links}}
+            maximalMatching={currentMatching}
+          />
+        )}
+        {/* <div className="legends-right">
+          <div className="legend-line">
+            <span className="legend-item">
+              <span className="legend-dot red-dot"></span>Vertices in Vertex Cover From A part
+            </span>
+            <span className="legend-item">
+              <span className="legend-dot green-dot"></span>Vertices in Vertex Cover From B part
+            </span>
+          </div>
+        </div> */}
       </div>
     </div>
   );
   
 }
-const styles = {
-  
-};
 
 
 
-export default G4;
+
+export default G1;

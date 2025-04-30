@@ -22,7 +22,7 @@ function Contact() {
           <img src={photo2} alt="Co-Creator" />
         </div>
         <div className='About'>
-          <h1>Jane Doe</h1>
+          <h1>Mohammed Yassin</h1>
           <h2>janedoe@email.com</h2>
           <h2>Contact @ 9876543210</h2>
         </div>

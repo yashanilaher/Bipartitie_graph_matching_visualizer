@@ -1,6 +1,7 @@
 // berge.jsx:(Visualizing maximal matching)
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
+import { toast,ToastContainer } from "react-toastify";
 
 const BergeVisualization = ({ graph , onFinalMatching }) => {
   const svgRef = useRef();
@@ -13,6 +14,42 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
   const [precomputedMatchings, setPrecomputedMatchings] = useState([]);
 
   const { nodes, links } = graph;
+
+  const Complete=()=>{
+    toast.success("Done! Verify Cover! 🎉",{
+      position: "top-center",
+      autoClose: 3000, // 3 seconds
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "dark",
+    })
+  }
+  const Warn=()=>{
+    toast.error("NO Steps Before!",{
+      position: "top-center",
+      autoClose: 3000, // 3 seconds
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "dark",
+      // theme: "colored",
+    })
+  }
+  const Reset=()=>{
+    toast.info("Reset Done ",{
+      position: "top-center",
+      autoClose: 3000, // 3 seconds
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "dark",
+      // theme: "colored",
+    })
+  }
   // console.log("nodes",nodes);
   // console.log("links",links);
 
@@ -192,10 +229,10 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
     console.log("prec_matchings", matchings);
     console.log("type",typeof(precomputedMatchings));
     // console.log("prec_paths", paths);
-    if (onFinalMatching && matchings.length>0){
-      console.log("hahahaha")
-      onFinalMatching(matchings[matchings.length-1]);
-    }
+    // if (onFinalMatching && matchings.length>0){
+    //   console.log("hahahaha")
+    //   onFinalMatching(matchings[matchings.length-1]);
+    // }
   };
 
   // Precompute steps when the graph changes or on component mount
@@ -240,7 +277,12 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
       setStep(step + 1);
     }
     else{
-      alert("No more steps available. Maximum matching reached!");
+      if (onFinalMatching && precomputedMatchings.length>0){
+        console.log("hahahaha")
+        onFinalMatching(precomputedMatchings[precomputedMatchings.length-1]);
+      }
+      // alert("Maximum matching reached! Visualization Completed");
+      Complete();
     }
   };
 
@@ -280,7 +322,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
       // setStep(step + 1);
     }
     else{
-      alert("No steps before this.");
+      Warn();
     }
   };
   
@@ -291,6 +333,9 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
     setMatching([]);
     setAugmentingPath([]);
     precomputeSteps();
+    onFinalMatching([])
+    Reset();
+
   };
 
   
@@ -390,6 +435,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
   return (
     <div>
       <svg ref={svgRef} style={{ border: "2px solid black" }}></svg>
+      <ToastContainer/>
       <div style={{ marginTop: "20px", display: "flex", gap: "10px",
                    justifyContent: "center" }}>
         <button onClick={handleNextStep}>Next Step</button>
