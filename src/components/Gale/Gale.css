@@ -1,0 +1,59 @@
+/* src/components/Gale/Gale.css */
+.gale-container {
+    text-align: center;
+    padding: 20px;
+    background-color: #eef7fa;
+    min-height: 72.8vh;
+  }
+  
+  .gale-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #004466;
+  }
+  
+  .gale-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #226677;
+  }
+  
+  .gale-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    margin-top: 20px;
+  }
+  
+  .gale-card {
+    background-color: #fff;
+    border: 1px solid #ccddee;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 70, 100, 0.1);
+    text-align: center;
+  }
+  
+  .gale-card-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .gale-btn {
+    background-color: #0077aa;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+  }
+  
+  .gale-btn:hover {
+    background-color: #005f88;
+  }
+  

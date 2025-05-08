@@ -16,6 +16,11 @@ import About from "./components/About/About";
 import Contact from "./components/Contact/Contact";
 import Berge from "./components/Berge/Berge";
 
+
+import Gale from "./components/Gale/Gale";
+import S1 from './components/Gale/S1';
+
+
 function App() {
   const router=createBrowserRouter(
     createRoutesFromElements(
@@ -33,7 +38,10 @@ function App() {
         {/* <Route path='graph1' element={<G1/>}/>
         <Route path='graph2' element={<G2/>}/>
         <Route path='graph3' element={<G3/>}/> */}
-        <Route path='customgraph' element={<Custom/>}/>
+
+        <Route path='gale' element={<Gale/>}/>
+        <Route path='sgraph1' element={<S1/>}/>
+
       </Route>
     )
   )

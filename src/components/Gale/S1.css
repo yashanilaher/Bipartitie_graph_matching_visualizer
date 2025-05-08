@@ -1,0 +1,213 @@
+/* src/components/Gale/S1.css
+.s1-container {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .tables {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .person-row {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+  }
+  
+  .person-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+  }
+  
+  .person-avatar.engaged {
+    background: #4caf50;
+    color: white;
+  }
+  
+  .preferences {
+    display: flex;
+  }
+  
+  .pref {
+    padding: 2px 6px;
+    margin: 0 2px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .pref.accepted {
+    background: #4caf50;
+    color: white;
+  }
+  
+  .pref.rejected {
+    background: #f44336;
+    color: white;
+  }
+  
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+   */
+/* container */
+.visualizer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+    font-family: sans-serif;
+    color: #333;
+  }
+  
+  /* header */
+  .title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* loading */
+  .loading {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+  }
+  
+  /* status panel */
+  .status-panel {
+    background: #eef;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+  }
+  .status-panel h3 {
+    margin: 0 0 0.5rem;
+  }
+  .status-panel p {
+    margin: 0.25rem 0;
+  }
+  .engagements ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.5rem;
+  }
+  
+  /* participants grid */
+  .participants-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .column h2 {
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* person row */
+  .person-row {
+    display: flex;
+    align-items: center;
+    background: #f7f7f7;
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #888;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 0.75rem;
+  }
+  .avatar.engaged {
+    background: #4caf50;
+  }
+  .prefs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+  }
+  .pref {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+  .pref.accepted {
+    background: #4caf50;
+    color: white;
+  }
+  .pref.rejected {
+    background: #f44336;
+    color: white;
+  }
+  
+  /* controls */
+  .controls {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .controls button {
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .controls button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* legend */
+  .legend {
+    background: #fafafa;
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+  .legend h3 {
+    margin: 0 0 0.5rem;
+  }
+  .legend-items {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot.pending   { background: #ddd; }
+  .dot.accepted  { background: #4caf50; }
+  .dot.rejected  { background: #f44336; }
+  

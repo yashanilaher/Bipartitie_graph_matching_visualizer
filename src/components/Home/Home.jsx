@@ -11,7 +11,7 @@ function Home() {
       </p>
       <div className="home-button-container">
         <Link to="/berge" className="home-btn">Berge Algorithm</Link>
-        <Link to="/algorithm-b" className="home-btn">Algorithm B</Link>
+        <Link to="/gale" className="home-btn">Gale-Shapley Algorithm</Link>
       </div>
     </div>
   );
