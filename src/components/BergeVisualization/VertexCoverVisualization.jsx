@@ -1,6 +1,16 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 
+<defs>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+    <feMerge>
+      <feMergeNode in="coloredBlur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+
 const VertexCoverVisualization = ({ graph, maximalMatching }) => {
   const svgRef = useRef();
   const { nodes, links } = graph;
@@ -70,7 +80,7 @@ const VertexCoverVisualization = ({ graph, maximalMatching }) => {
     }
 
     setVertexCover(Cover);
-    console.log("vertex_cover", vertexCover);
+    // console.log("vertex_cover", vertexCover);
   };
 
   // Run vertex cover computation when maximalMatching or graph changes
@@ -121,12 +131,21 @@ const VertexCoverVisualization = ({ graph, maximalMatching }) => {
       .attr("fill", (d) =>
         vertexCover.includes(d.id)
           ? d.group === "A"
-            ? "#ff0000" // Red for A in vertex cover
-            : "#00ff00" // Green for B in vertex cover
+            ? "#E74C3C" // Red for A in vertex cover
+            : "#2ECC71" // Green for B in vertex cover
           : d.group === "A"
-          ? "#ff7f0e" // Original orange for A
-          : "#1f77b4" // Original blue for B
+          ? "#4A90E2" // Original orange for A
+          : "#F5A623" // Original blue for B
+      )
+      .attr("stroke", (d) =>
+        vertexCover.includes(d.id)
+          ? (d.group === "A" ? "#C0392B" : "#27AE60") // Darker border for distinction
+          : ""
+      )
+      .attr("stroke-width", (d) =>
+        vertexCover.includes(d.id) ? 3 : 0
       );
+
 
     // Add labels
     svg
@@ -163,15 +182,16 @@ const VertexCoverVisualization = ({ graph, maximalMatching }) => {
         <p className="pp1">
           Vertex Cover: {vertexCover.length > 0 ? vertexCover.join(", ") : "None"}
         </p>
-        <p className="pp2">Size: {vertexCover.length}</p>
+        <p className="pp2">VetexCover Size: {vertexCover.length}</p>
+        <p className="pp2">Matching Size: {maximalMatching.length}</p>
       </div>
       <div className="legends-right">
           <div className="legend-line">
             <span className="legend-item">
-              <span className="legend-dot red-dot"></span>Vertices in Vertex Cover From A part
+              <span className="legend-dot red-1-dot"></span>Vertices in Vertex Cover From A part
             </span>
             <span className="legend-item">
-              <span className="legend-dot green-dot"></span>Vertices in Vertex Cover From B part
+              <span className="legend-dot green-1-dot"></span>Vertices in Vertex Cover From B part
             </span>
           </div>
         </div>

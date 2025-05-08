@@ -4,7 +4,6 @@ import BergeVisualization from "../BergeVisualization/BergeVisualization";
 // import "./G1.css"; // Add CSS file for layout
 import VertexCoverVisualization from "../BergeVisualization/VertexCoverVisualization";
 import BergeAlgorithm from '../BergeVisualization/BergeAlgorithm';
-import { toast } from "react-toastify";
 
 
 
@@ -23,6 +22,7 @@ const G1 = () => {
     { id: "b4", group: "B" },
     // { id: "b5", group: "B" },
   ]);
+
 
   // const [nodes, setNodes] = useState([
   //   { id: "a1", group: "A" },
@@ -95,7 +95,7 @@ const G1 = () => {
       .enter()
       .append("circle")
       .attr("r", 15)
-      .attr("fill", (d) => (d.group === "A" ? "#ff7f0e" : "#1f77b4"));
+      .attr("fill", (d) => (d.group === "A" ? "#4A90E2" : "#F5A623"));
 
     // Add node labels
     svg
@@ -130,7 +130,7 @@ const G1 = () => {
     setCurrentMatching((prev)=>{
       const isDiff=JSON.stringify(prev)!=JSON.stringify(matching);
       if (isDiff){
-        console.log("Received Currect Matching", matching);
+        // console.log("Received Currect Matching", matching);
         return matching;
       }
       else{
@@ -159,7 +159,7 @@ const G1 = () => {
         <div className="legends-left">
           <div className="legend-line">
             <span className="legend-item">
-              <span className="legend-dot blue-dot"></span> Augmenting Path
+              <span className="legend-dot purple-dot"></span> Augmenting Path
             </span>
             <span className="legend-item">
               <span className="legend-dot green-dot"></span> Matching in Augmenting Path

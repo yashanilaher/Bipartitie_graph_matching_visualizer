@@ -14,7 +14,7 @@ const BergeAlgorithm = () => {
     path = findAugmentingPath(graph, matching)
     
     if path == null:
-      break  // No more augmenting paths, matching is maximum
+      break  // Maximum Matching Reached
       
     // Augment: flip matched/unmatched edges along the path
     // (Remove matched edges in path, add unmatched edges)
@@ -22,8 +22,7 @@ const BergeAlgorithm = () => {
   
   return matching
 
-// Berge's Theorem: A matching is maximum if and only if
-// there is no augmenting path.`}
+// Berge's Theorem: There no M Augmenting Path for M Matchng`}
           </code>
         </pre>
       </div>

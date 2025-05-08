@@ -7,22 +7,22 @@ import BergeAlgorithm from '../BergeVisualization/BergeAlgorithm';
 import { toast } from "react-toastify";
 
 
-
 const G1 = () => {
   const [currentMatching, setCurrentMatching] = useState([]);
   const svgRef = useRef();
   const [nodes, setNodes] = useState([
     { id: "a1", group: "A" },
-    { id: "a2", group: "A" },
-    { id: "a3", group: "A" },
-    { id: "a4", group: "A" },
+    // { id: "a2", group: "A" },
+    // { id: "a3", group: "A" },
+    // { id: "a4", group: "A" },
     // { id: "a5", group: "A" },
     { id: "b1", group: "B" },
-    { id: "b2", group: "B" },
-    { id: "b3", group: "B" },
-    { id: "b4", group: "B" },
+    // { id: "b2", group: "B" },
+    // { id: "b3", group: "B" },
+    // { id: "b4", group: "B" },
     // { id: "b5", group: "B" },
   ]);
+
 
   // const [nodes, setNodes] = useState([
   //   { id: "a1", group: "A" },
@@ -41,11 +41,11 @@ const G1 = () => {
 
   const [links, setLinks] = useState([
     { source: "a1", target: "b1" },
-    { source: "a1", target: "b2" },
-    { source: "a2", target: "b1" },
-    { source: "a3", target: "b3" },
-    { source: "a3", target: "b4" },
-    { source: "a4", target: "b3" },
+    // { source: "a1", target: "b2" },
+    // { source: "a2", target: "b1" },
+    // { source: "a3", target: "b3" },
+    // { source: "a3", target: "b4" },
+    // { source: "a4", target: "b3" },
     // { source: "a4", target: "b5" },
     // { source: "a5", target: "b4" },
   ]);
@@ -95,7 +95,7 @@ const G1 = () => {
       .enter()
       .append("circle")
       .attr("r", 15)
-      .attr("fill", (d) => (d.group === "A" ? "#ff7f0e" : "#1f77b4"));
+      .attr("fill", (d) => (d.group === "A" ? "#4A90E2" : "#F5A623"));
 
     // Add node labels
     svg
@@ -159,7 +159,7 @@ const G1 = () => {
         <div className="legends-left">
           <div className="legend-line">
             <span className="legend-item">
-              <span className="legend-dot blue-dot"></span> Augmenting Path
+              <span className="legend-dot purple-dot"></span> Augmenting Path
             </span>
             <span className="legend-item">
               <span className="legend-dot green-dot"></span> Matching in Augmenting Path

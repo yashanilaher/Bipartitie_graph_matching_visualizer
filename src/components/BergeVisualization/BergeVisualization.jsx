@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 import { toast,ToastContainer } from "react-toastify";
 
-const BergeVisualization = ({ graph , onFinalMatching }) => {
+const BergeVisualization = ({ graph , onFinalMatching,graphVersion }) => {
   const svgRef = useRef();
   const [step, setStep] = useState(0);
   const [matching, setMatching] = useState([]); // Current matching
@@ -14,6 +14,8 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
   const [precomputedMatchings, setPrecomputedMatchings] = useState([]);
 
   const { nodes, links } = graph;
+  console.log("nodes-1",nodes,links);
+  // console.log("links-1",links);
 
   const Complete=()=>{
     toast.success("Done! Verify Cover! 🎉",{
@@ -38,6 +40,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
       // theme: "colored",
     })
   }
+
   const Reset=()=>{
     toast.info("Reset Done ",{
       position: "top-center",
@@ -84,6 +87,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
     
     visited.add(nodeId);
     path.push(nodeId);
+    // console.log("a1")
     
     // Get node object
     const node = nodes.find(n => n.id === nodeId);
@@ -101,6 +105,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
 
         // If adjacent node is unmatched, we found an augmenting path
         if (!isMatched(adjacentId, currentMatching)) {
+          // console.log("B")
           return true;
         }
         
@@ -215,10 +220,10 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
       if (path) {
         paths.push(path);
         currentMatching = computeNewMatching(path, currentMatching);
-        console.log("CurrentMatching",currentMatching)
+        // console.log("CurrentMatching",currentMatching)
         // Store a deep copy of currentMatching at this step
         matchings.push([...currentMatching]);
-        console.log("matching",matchings);
+        // console.log("matching",matchings);
       } else {
         break;
       }
@@ -226,8 +231,8 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
     
     setPrecomputedPaths(paths);
     setPrecomputedMatchings(matchings);
-    console.log("prec_matchings", matchings);
-    console.log("type",typeof(precomputedMatchings));
+    // console.log("prec_matchings", matchings);
+    // console.log("type",typeof(precomputedMatchings));
     // console.log("prec_paths", paths);
     // if (onFinalMatching && matchings.length>0){
     //   console.log("hahahaha")
@@ -242,7 +247,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
     setStep(0);
     setMatching([]);
     setAugmentingPath([]);
-  }, [graph]);
+  }, [graph,graphVersion]);
 
   // useEffect(() => {
   //   if (onFinalMatching && precomputedMatchings.length > 0) {
@@ -278,7 +283,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
     }
     else{
       if (onFinalMatching && precomputedMatchings.length>0){
-        console.log("hahahaha")
+        // console.log("hahahaha")
         onFinalMatching(precomputedMatchings[precomputedMatchings.length-1]);
       }
       // alert("Maximum matching reached! Visualization Completed");
@@ -390,7 +395,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
         
         if (isInMatching) return "red";
 
-        if (isInPath) return "blue";
+        if (isInPath) return "#9013FE";
 
 
         return "#999";
@@ -404,7 +409,7 @@ const BergeVisualization = ({ graph , onFinalMatching }) => {
       .enter()
       .append("circle")
       .attr("r", 15)
-      .attr("fill", (d) => (d.group === "A" ? "#ff7f0e" : "#1f77b4"));
+      .attr("fill", (d) => (d.group === "A" ? "#4A90E2" : "#F5A623"));
 
     // Add labels
     svg
