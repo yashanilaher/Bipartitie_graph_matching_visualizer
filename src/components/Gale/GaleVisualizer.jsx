@@ -808,105 +808,111 @@ export default function GaleVisualizer({
 
     // 4) render
     return (
-        <div className="visualizer">
-            <h1 className="title">Gale–Shapley Algorithm Visualizer</h1>
+        <div className="MainContainer">
+            <div className="visualizer">
+                <h1 className="title">Gale–Shapley Algorithm Visualizer</h1>
 
-            <div className="status-panel">
-                <h3>{isMenProposer ? 'Men proposing' : 'Women proposing'}</h3>
-                {freeList.length > 0 && (
-                    <p>
-                        Free {isMenProposer ? 'men' : 'women'}:{' '}
-                        <strong>
-                            {freeList.map((name, index) => (
-                                <React.Fragment key={name}>
-                                    {index > 0 && ', '}
-                                    <span className="person-name">{renderSubscript(name)}</span>
-                                </React.Fragment>
-                            ))}
-                        </strong>
-                    </p>
-                )}
-                {Object.keys(engaged).length > 0 && (
-                    <div className="engagements">
-                        <p>Current engagements:</p>
-                        <ul className="matches-list">
-                            {Object.entries(engaged).map(([q, p]) => (
-                                <li key={q}>
-                                    <span className="person-name">{renderSubscript(p)}</span> ↔ <span className="person-name">{renderSubscript(q)}</span>
-                                </li>
-                            ))}
-                        </ul>
+                <div className="status-panel">
+                    <h3>{isMenProposer ? 'Men proposing' : 'Women proposing'}</h3>
+                    {freeList.length > 0 && (
+                        <p>
+                            Free {isMenProposer ? 'men' : 'women'}:{' '}
+                            <strong>
+                                {freeList.map((name, index) => (
+                                    <React.Fragment key={name}>
+                                        {index > 0 && ', '}
+                                        <span className="person-name">{renderSubscript(name)}</span>
+                                    </React.Fragment>
+                                ))}
+                            </strong>
+                        </p>
+                    )}
+                    {Object.keys(engaged).length > 0 && (
+                        <div className="engagements">
+                            <p>Current engagements:</p>
+                            <ul className="matches-list">
+                                {Object.entries(engaged).map(([q, p]) => (
+                                    <li key={q}>
+                                        <span className="person-name">{renderSubscript(p)}</span> ↔ <span className="person-name">{renderSubscript(q)}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+
+                <div className="participants-grid">
+                    <div className="column men-column">
+                        <h2>Men</h2>
+                        {Object.keys(menPreferences).map(m => {
+                            const isEngaged = Object.values(engaged).includes(m);
+                            const partner = Object.keys(engaged).find(w => engaged[w] === m);
+                            return (
+                                <div key={m} className="person-row">
+                                    <div className={`avatar ${isEngaged ? 'engaged' : ''} ${isEngaged ? 'highlight-circle' : ''}`}>
+                                        <span className="person-name">{renderSubscript(m)}</span>
+                                    </div>
+                                    <div className="prefs">
+                                        {menPreferences[m].map((w, i) => {
+                                            const isMatch = w === partner;
+                                            return (
+                                                <div key={w} className={`pref ${manStatus[m][i] === 1 ? 'accepted' : manStatus[m][i] === 2 ? 'rejected' : ''} ${isMatch ? 'matched-pref' : ''}`}>
+                                                    <span className="person-name">{renderSubscript(w)}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
-                )}
-            </div>
 
-            <div className="participants-grid">
-                <div className="column men-column">
-                    <h2>Men</h2>
-                    {Object.keys(menPreferences).map(m => {
-                        const isEngaged = Object.values(engaged).includes(m);
-                        const partner = Object.keys(engaged).find(w => engaged[w] === m);
-                        return (
-                            <div key={m} className="person-row">
-                                <div className={`avatar ${isEngaged ? 'engaged' : ''} ${isEngaged ? 'highlight-circle' : ''}`}>
-                                    <span className="person-name">{renderSubscript(m)}</span>
+                    <div className="column women-column">
+                        <h2>Women</h2>
+                        {Object.keys(womenPreferences).map(w => {
+                            const isEngaged = Object.keys(engaged).includes(w);
+                            const partner = engaged[w];
+                            return (
+                                <div key={w} className="person-row">
+                                    <div className={`avatar ${isEngaged ? 'engaged' : ''} ${isEngaged ? 'highlight-circle' : ''}`}>
+                                        <span className="person-name">{renderSubscript(w)}</span>
+                                    </div>
+                                    <div className="prefs">
+                                        {womenPreferences[w].map((m, i) => {
+                                            const isMatch = m === partner;
+                                            return (
+                                                <div key={m} className={`pref ${womanStatus[w][i] === 1 ? 'accepted' : womanStatus[w][i] === 2 ? 'rejected' : ''} ${isMatch ? 'matched-pref' : ''}`}>
+                                                    <span className="person-name">{renderSubscript(m)}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-                                <div className="prefs">
-                                    {menPreferences[m].map((w, i) => {
-                                        const isMatch = w === partner;
-                                        return (
-                                            <div key={w} className={`pref ${manStatus[m][i] === 1 ? 'accepted' : manStatus[m][i] === 2 ? 'rejected' : ''} ${isMatch ? 'matched-pref' : ''}`}>
-                                                <span className="person-name">{renderSubscript(w)}</span>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
 
-                <div className="column women-column">
-                    <h2>Women</h2>
-                    {Object.keys(womenPreferences).map(w => {
-                        const isEngaged = Object.keys(engaged).includes(w);
-                        const partner = engaged[w];
-                        return (
-                            <div key={w} className="person-row">
-                                <div className={`avatar ${isEngaged ? 'engaged' : ''} ${isEngaged ? 'highlight-circle' : ''}`}>
-                                    <span className="person-name">{renderSubscript(w)}</span>
-                                </div>
-                                <div className="prefs">
-                                    {womenPreferences[w].map((m, i) => {
-                                        const isMatch = m === partner;
-                                        return (
-                                            <div key={m} className={`pref ${womanStatus[w][i] === 1 ? 'accepted' : womanStatus[w][i] === 2 ? 'rejected' : ''} ${isMatch ? 'matched-pref' : ''}`}>
-                                                <span className="person-name">{renderSubscript(m)}</span>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        );
-                    })}
+                <div className="controls">
+                    <button onClick={() => setIdx(0)}>Reset</button>
+                    <button onClick={() => setIdx(i => Math.max(0, i - 1))} disabled={idx === 0}>Previous</button>
+                    <span>Step {idx + 1} of {steps.length}</span>
+                    <button onClick={() => setIdx(i => Math.min(steps.length - 1, i + 1))} disabled={idx === steps.length - 1}>Next</button>
+                </div>
+
+                <div className="legend">
+                    <h3>Legend</h3>
+                    <div className="legend-items">
+                        <div className="legend-item"><span className="dot pending"></span> Pending</div>
+                        <div className="legend-item"><span className="dot accepted matched"></span> Accepted & Matched</div>
+                        <div className="legend-item"><span className="dot rejected"></span> Rejected</div>
+                    </div>
                 </div>
             </div>
+            <div>
 
-            <div className="controls">
-                <button onClick={() => setIdx(0)}>Reset</button>
-                <button onClick={() => setIdx(i => Math.max(0, i - 1))} disabled={idx === 0}>Previous</button>
-                <span>Step {idx + 1} of {steps.length}</span>
-                <button onClick={() => setIdx(i => Math.min(steps.length - 1, i + 1))} disabled={idx === steps.length - 1}>Next</button>
             </div>
 
-            <div className="legend">
-                <h3>Legend</h3>
-                <div className="legend-items">
-                    <div className="legend-item"><span className="dot pending"></span> Pending</div>
-                    <div className="legend-item"><span className="dot accepted matched"></span> Accepted & Matched</div>
-                    <div className="legend-item"><span className="dot rejected"></span> Rejected</div>
-                </div>
-            </div>
         </div>
     );
 }

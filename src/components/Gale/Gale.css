@@ -1,59 +1,128 @@
-/* src/components/Gale/Gale.css */
+/* Gale.css */
 .gale-container {
-    text-align: center;
-    padding: 20px;
-    background-color: #eef7fa;
-    min-height: 72.8vh;
-  }
-  
-  .gale-title {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    color: #004466;
-  }
-  
-  .gale-subtitle {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    color: #226677;
-  }
-  
+  text-align: center;
+  padding: 2rem;
+  background-color: #ffffff;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gale-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.gale-subtitle {
+  font-size: 1.25rem;
+  color: #4a5568;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.gale-card-container {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.gale-non-custom-cards {
+  flex: 2;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.gale-card {
+  background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gale-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.gale-card.custom {
+  flex: 1;
+  background: linear-gradient(145deg, #fefcbf, #fed7aa);
+  margin-top: 150px;
+}
+
+.gale-card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.gale-btn {
+  background: linear-gradient(90deg, #4c51bf, #6b7280);
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gale-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.gale-custom-btn {
+  background: linear-gradient(90deg, #ed8936, #f6ad55);
+}
+
+.gale-custom-btn:hover {
+  background: linear-gradient(90deg, #dd6b20, #ed8936);
+}
+
+.gale-card-img {
+  width: 100%;
+  height: 250px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .gale-card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    justify-items: center;
-    margin-top: 20px;
+    flex-direction: column;
   }
-  
-  .gale-card {
-    background-color: #fff;
-    border: 1px solid #ccddee;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 70, 100, 0.1);
-    text-align: center;
+
+  .gale-non-custom-cards {
+    grid-template-columns: 1fr;
   }
-  
-  .gale-card-img {
+
+  .gale-card.custom {
     width: 100%;
+  }
+
+  .gale-title {
+    font-size: 2rem;
+  }
+
+  .gale-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .gale-card-img {
     height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
   }
-  
-  .gale-btn {
-    background-color: #0077aa;
-    color: white;
-    padding: 10px 15px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    transition: background 0.3s ease;
-  }
-  
-  .gale-btn:hover {
-    background-color: #005f88;
-  }
-  
+}
