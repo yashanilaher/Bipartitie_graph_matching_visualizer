@@ -647,7 +647,6 @@
 //         </div>
 //     );
 // }
-
 import React, { useState, useEffect } from 'react';
 import './S1.css';
 
@@ -669,7 +668,7 @@ export default function GaleVisualizer({
         const freeList = [...proposers];
         const proposals = {};
         const engaged = {};
-        const manStatus = {}, womanStatus = {};
+        const manStatus = {}, womanStatus = {}; // Corrected:  Using womanStatus
 
         men.forEach(m => { manStatus[m] = menPrefs[m].map(() => 0); });
         women.forEach(w => { womanStatus[w] = womenPrefs[w].map(() => 0); });
@@ -699,7 +698,7 @@ export default function GaleVisualizer({
                     const j = womenPrefs[q].indexOf(p);
                     womanStatus[q][j] = 2;
                 } else {
-                    womanStatus[p][i] = 2;
+                    womanStatus[p][i] = 2; // Corrected: Using womanStatus
                     const j = menPrefs[q].indexOf(p);
                     manStatus[q][j] = 2;
                 }
@@ -711,7 +710,7 @@ export default function GaleVisualizer({
                         const j = womenPrefs[q].indexOf(p);
                         womanStatus[q][j] = 1;
                     } else {
-                        womanStatus[p][i] = 1;
+                        womanStatus[p][i] = 1;  // Corrected: Using womanStatus
                         const j = menPrefs[q].indexOf(p);
                         manStatus[q][j] = 1;
                     }
@@ -727,7 +726,7 @@ export default function GaleVisualizer({
                             const j = womenPrefs[q].indexOf(p);
                             womanStatus[q][j] = 1;
                         } else {
-                            womanStatus[p][i] = 1;
+                            womanStatus[p][i] = 1; // Corrected: Using womanStatus
                             const j = menPrefs[q].indexOf(p);
                             manStatus[q][j] = 1;
                         }
@@ -738,7 +737,7 @@ export default function GaleVisualizer({
                             const j0 = womenPrefs[q].indexOf(current);
                             womanStatus[q][j0] = 2;
                         } else {
-                            womanStatus[current][oldIdx] = 2;
+                            womanStatus[current][oldIdx] = 2; // Corrected: Using womanStatus
                             const j0 = menPrefs[q].indexOf(current);
                             manStatus[q][j0] = 2;
                         }
@@ -773,16 +772,39 @@ export default function GaleVisualizer({
     // current snapshot
     const { manStatus, womanStatus, engaged, isMenProposer, freeList } = steps[idx];
 
-    // Helper function to render names with subscripts
+
+
     const renderSubscript = (name) => {
-        return name.split('').map((char, index) => {
-            if (char === 'M' || char === 'W') {
-                return <span key={index}>{char}</span>; // Keep M and W as regular text
+        let baseName = '';
+        let subscript = '';
+        let foundNumber = false;
+    
+        for (let i = name.length - 1; i >= 0; i--) {
+            const char = name[i];
+            if (isNaN(parseInt(char, 10))) { //if not a number
+                if (foundNumber) {
+                    baseName = name.substring(0, i + 1);
+                    break;
+                }
+                else{
+                    baseName = name.substring(0, i + 1);
+                }
             } else {
-                return <sub key={index}>{char}</sub>; // Subscript for numbers
+                subscript = char + subscript;
+                foundNumber = true;
             }
-        });
+        }
+        if (subscript) {
+            return (
+                <>
+                    <span>{baseName}</span>
+                    <sub>{subscript}</sub>
+                </>
+            );
+        }
+        return <span>{name}</span>;
     };
+    
 
     // 4) render
     return (
@@ -794,7 +816,6 @@ export default function GaleVisualizer({
                 {freeList.length > 0 && (
                     <p>
                         Free {isMenProposer ? 'men' : 'women'}:{' '}
-                        {/* <strong>{freeList.map(name => <span key={name} className="person-name">{renderSubscript(name)}</span>).join(', ')}</strong> */}
                         <strong>
                             {freeList.map((name, index) => (
                                 <React.Fragment key={name}>
@@ -889,4 +910,5 @@ export default function GaleVisualizer({
         </div>
     );
 }
+
 

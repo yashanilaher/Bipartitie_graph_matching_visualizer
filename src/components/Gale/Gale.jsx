@@ -13,14 +13,29 @@ export default function Gale() {
       </p>
 
       <div className="gale-card-container">
+
         <div className="gale-card">
-          <img src={stepImg} alt="Input Case 1" className="gale-card-img" />
+          <img src={stepImg} alt="Scenario 1" className="gale-card-img" />
           <Link to="/sgraph1" className="gale-btn">Scenario 1</Link>
         </div>
         <div className="gale-card">
-          <img src={stepImg} alt="Custom Input" className="gale-card-img" />
+          <img src={stepImg} alt="Scenario 2" className="gale-card-img" />
+          <Link to="/sgraph2" className="gale-btn">Scenario 2</Link>
+        </div>
+        <div className="gale-card">
+          <img src={stepImg} alt="Scenario 3" className="gale-card-img" />
+          <Link to="/sgraph3" className="gale-btn">Scenario 3</Link>
+        </div>
+        <div className="gale-card">
+          <img src={stepImg} alt="Scenario 4" className="gale-card-img" />
+          <Link to="/sgraph4" className="gale-btn">Scenario 4</Link>
+        </div>
+
+        <div className="gale-card">
+          <img src={stepImg} alt="Custom Scenario" className="gale-card-img" />
           <Link to="/scustom" className="gale-btn">Custom Scenario</Link>
         </div>
+
       </div>
     </div>
   );
