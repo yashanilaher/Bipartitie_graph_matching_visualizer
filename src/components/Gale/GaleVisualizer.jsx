@@ -794,7 +794,15 @@ export default function GaleVisualizer({
                 {freeList.length > 0 && (
                     <p>
                         Free {isMenProposer ? 'men' : 'women'}:{' '}
-                        <strong>{freeList.map(name => <span key={name} className="person-name">{renderSubscript(name)}</span>).join(', ')}</strong>
+                        {/* <strong>{freeList.map(name => <span key={name} className="person-name">{renderSubscript(name)}</span>).join(', ')}</strong> */}
+                        <strong>
+                            {freeList.map((name, index) => (
+                                <React.Fragment key={name}>
+                                    {index > 0 && ', '}
+                                    <span className="person-name">{renderSubscript(name)}</span>
+                                </React.Fragment>
+                            ))}
+                        </strong>
                     </p>
                 )}
                 {Object.keys(engaged).length > 0 && (
