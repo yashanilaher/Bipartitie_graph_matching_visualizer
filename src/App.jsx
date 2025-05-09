@@ -32,7 +32,7 @@ function App() {
         <Route path='graph2' element={<G2/>}/>
         <Route path='graph3' element={<G3/>}/>
         <Route path='graph4' element={<G4/>}/>
-        <Route path='graph5' element={<G5/>}/>
+        {/* <Route path='graph5' element={<G5/>}/> */}
         <Route path='custom' element={<Custom/>}/>
         <Route path='about' element={<About/>}/>
         <Route path='contact' element={<Contact/>}/>

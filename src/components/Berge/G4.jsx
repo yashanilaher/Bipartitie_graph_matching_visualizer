@@ -14,12 +14,12 @@ const G1 = () => {
     { id: "a1", group: "A" },
     { id: "a2", group: "A" },
     { id: "a3", group: "A" },
-    { id: "a4", group: "A" },
+    // { id: "a4", group: "A" },
     // { id: "a5", group: "A" },
     { id: "b1", group: "B" },
     { id: "b2", group: "B" },
     { id: "b3", group: "B" },
-    { id: "b4", group: "B" },
+    // { id: "b4", group: "B" },
     // { id: "b5", group: "B" },
   ]);
 
@@ -41,13 +41,14 @@ const G1 = () => {
 
   const [links, setLinks] = useState([
     { source: "a1", target: "b1" },
+    { source: "a1", target: "b2" },
+    { source: "a1", target: "b3" },
+    { source: "a2", target: "b1" },
     { source: "a2", target: "b2" },
-    { source: "a3", target: "b4" },
-    // { source: "a3", target: "b3" },
-    // { source: "a3", target: "b4" },
-    // { source: "a4", target: "b3" },
-    // { source: "a4", target: "b5" },
-    // { source: "a5", target: "b4" },
+    { source: "a2", target: "b3" },
+    { source: "a3", target: "b1" },
+    { source: "a3", target: "b2" },
+    { source: "a3", target: "b3" },
   ]);
   // const [links, setLinks] = useState([
   //   { source: "a1", target: "b1" },

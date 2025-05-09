@@ -14,6 +14,9 @@ function BipartiteGraph() {
     const [currentMatching, setCurrentMatching] = useState([]);
     const [point, setPoint] = useState(0);
     const [graphVersion, setGraphVersion] = useState(0);
+    // Track used node IDs with counter maps
+    const [usedNodeIdsA, setUsedNodeIdsA] = useState(new Map());
+    const [usedNodeIdsB, setUsedNodeIdsB] = useState(new Map());
 
     const Warn1 = () => {
         toast.error("Please Enter Valid Nodes!", {
@@ -65,17 +68,63 @@ function BipartiteGraph() {
         }
     };
 
+    // Get next available node ID
+    const getNextAvailableId = (nodeNum, group) => {
+        const map = group === "A" ? usedNodeIdsA : usedNodeIdsB;
+        
+        // If the user provided a specific number
+        if (nodeNum !== null && nodeNum !== undefined) {
+            return nodeNum.toString();
+        }
+        
+        // Find the next available number
+        let nextId = 0;
+        while (map.has(nextId.toString())) {
+            nextId++;
+        }
+        return nextId.toString();
+    };
+
+    // Update used node IDs
+    const updateUsedNodeIds = (nodeId, group) => {
+        if (group === "A") {
+            setUsedNodeIdsA(prevMap => {
+                const newMap = new Map(prevMap);
+                newMap.set(nodeId, true);
+                return newMap;
+            });
+        } else {
+            setUsedNodeIdsB(prevMap => {
+                const newMap = new Map(prevMap);
+                newMap.set(nodeId, true);
+                return newMap;
+            });
+        }
+    };
+
+    const isNumericString = function(str) {
+        return /^[0-9]+$/.test(str);
+    }
+
     const handleAddEdge = () => {
         if (!fromNode || !toNode) {
             Warn1();
             return;
         }
 
+        if (!isNumericString(fromNode) || !isNumericString(toNode)){
+            Warn1();
+            return;
+        }
+
         // Check if edge already exists
+        const fromNodeId = `a${fromNode}`;
+        const toNodeId = `b${toNode}`;
+
         const edgeExists = links.some(
             (edge) => 
-                (edge.source.id === `a${fromNode}` && edge.target.id === `b${toNode}`) ||
-                (edge.source === `a${fromNode}` && edge.target === `b${toNode}`)
+                (edge.source.id === fromNodeId && edge.target.id === toNodeId) ||
+                (edge.source === fromNodeId && edge.target === toNodeId)
         );
 
         if (edgeExists) {
@@ -84,9 +133,6 @@ function BipartiteGraph() {
         }
 
         // Check if nodes exist and add them if they don't
-        const fromNodeId = `a${fromNode}`;
-        const toNodeId = `b${toNode}`;
-        
         const fromNodeExists = nodes.some((node) => node.id === fromNodeId);
         const toNodeExists = nodes.some((node) => node.id === toNodeId);
         
@@ -100,6 +146,9 @@ function BipartiteGraph() {
                 x: fromPosition.x,
                 y: fromPosition.y
             });
+            
+            // Update used node IDs for group A
+            updateUsedNodeIds(fromNode, "A");
         }
 
         if (!toNodeExists) {
@@ -110,6 +159,9 @@ function BipartiteGraph() {
                 x: toPosition.x,
                 y: toPosition.y
             });
+            
+            // Update used node IDs for group B
+            updateUsedNodeIds(toNode, "B");
         }
 
         setNodes(updatedNodes);
@@ -261,17 +313,21 @@ function BipartiteGraph() {
             const isLeft = x < width / 2;
     
             const newGroup = isLeft ? "A" : "B";
-            const aCount = nodes.filter(n => n.group === "A").length;
-            const bCount = nodes.filter(n => n.group === "B").length;
             
-            const newId = isLeft ? `a${aCount}` : `b${bCount}`;
+            // Find next available node ID
+            const nodeNumeric = getNextAvailableId(null, newGroup);
+            const newId = isLeft ? `a${nodeNumeric}` : `b${nodeNumeric}`;
+            
             const newNode = { id: newId, group: newGroup, x, y };
+            
+            // Update used node IDs
+            updateUsedNodeIds(nodeNumeric, newGroup);
             
             setNodes(prev => [...prev, newNode]);
             setGraphVersion(prev => prev + 1);
             setCurrentMatching([]);
         }
-    }, [nodes, links]);
+    }, [nodes, links, usedNodeIdsA, usedNodeIdsB]);
 
     const onFinalMatching = (matching) => {
         setCurrentMatching((prev) => {

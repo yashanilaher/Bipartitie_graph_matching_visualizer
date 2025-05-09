@@ -12,34 +12,26 @@ function Berge() {
       </p>
 
       <div className="berge-graph-container">
-        {/* Static Graphs with Images */}
-        <div className="berge-graph-card">
-          <img src={graphImg} alt="Graph 1" className="berge-graph-img" />
-          <Link to="/graph1" className="berge-btn">Graph 1</Link>
+        <div className="berge-non-custom-graphs">
+          <div className="berge-graph-card">
+            <img src={graphImg} alt="Graph 1" className="berge-graph-img" />
+            <Link to="/graph1" className="berge-btn">Graph 1</Link>
+          </div>
+          <div className="berge-graph-card">
+            <img src={graphImg} alt="Graph 2" className="berge-graph-img" />
+            <Link to="/graph2" className="berge-btn">Graph 2</Link>
+          </div>
+          <div className="berge-graph-card">
+            <img src={graphImg} alt="Graph 3" className="berge-graph-img" />
+            <Link to="/graph3" className="berge-btn">Graph 3</Link>
+          </div>
+          <div className="berge-graph-card">
+            <img src={graphImg} alt="Graph 4" className="berge-graph-img" />
+            <Link to="/graph4" className="berge-btn">Graph 4</Link>
+          </div>
         </div>
-        
-        <div className="berge-graph-card">
-          <img src={graphImg} alt="Graph 2" className="berge-graph-img" />
-          <Link to="/graph2" className="berge-btn">Graph 2</Link>
-        </div>
-
-        <div className="berge-graph-card">
-          <img src={graphImg} alt="Graph 3" className="berge-graph-img" />
-          <Link to="/graph3" className="berge-btn">Graph 3</Link>
-        </div>
-
-        <div className="berge-graph-card">
-          <img src={graphImg} alt="Graph 4" className="berge-graph-img" />
-          <Link to="/graph4" className="berge-btn">Graph 4</Link>
-        </div>
-
-        <div className="berge-graph-card">
-          <img src={graphImg} alt="Graph 5" className="berge-graph-img" />
-          <Link to="/graph5" className="berge-btn">Graph 5</Link>
-        </div>
-        
-        <div className="berge-graph-card">
-          <img src={graphImg} alt="Graph 6" className="berge-graph-img" />
+        <div className="berge-graph-card custom">
+          <img src={graphImg} alt="Custom Graph" className="berge-graph-img" />
           <Link to="/custom" className="berge-btn berge-custom-btn">Custom Graph</Link>
         </div>
       </div>
