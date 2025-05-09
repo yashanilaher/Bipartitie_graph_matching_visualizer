@@ -534,12 +534,21 @@ function stableMatchingWithSteps(menPreferences, womenPreferences, proposerGroup
           manStatus[p][i] = 1;
           if (isMenProposer) womanStatus[q][rankP] = 1;
           else manStatus[q][rankP] = 1;
-
+        
           // reject old
           const oldIdx = proposerPrefs[current].indexOf(q);
           manStatus[current][oldIdx] = 2;
+          if (isMenProposer) {
+            const rankCurrent = proposeePrefs[q].indexOf(current);
+            womanStatus[q][rankCurrent] = 2;
+          } else {
+            const rankCurrent = proposeePrefs[q].indexOf(current);
+            manStatus[q][rankCurrent] = 2;
+          }
+        
           freeList[0] = current;
         }
+        
       }
 
       capture();

@@ -19,6 +19,7 @@ import Berge from "./components/Berge/Berge";
 
 import Gale from "./components/Gale/Gale";
 import S1 from './components/Gale/S1';
+import SCustom from './components/Gale/SCustom';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
 
         <Route path='gale' element={<Gale/>}/>
         <Route path='sgraph1' element={<S1/>}/>
+        <Route path='scustom' element={<SCustom/>}/>
 
       </Route>
     )
