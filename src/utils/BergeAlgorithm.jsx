@@ -1,8 +1,9 @@
+// berge.jsx:(Visualizing maximal matching)
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
-import { toast, ToastContainer } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 
-const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
+const BergeVisualization = ({ graph , onFinalMatching,graphVersion }) => {
   const svgRef = useRef();
   const [step, setStep] = useState(0);
   const [matching, setMatching] = useState([]); // Current matching
@@ -13,11 +14,11 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
   const [precomputedMatchings, setPrecomputedMatchings] = useState([]);
 
   const { nodes, links } = graph;
-  // console.log("BergeVis received nodes:", nodes);
-  // console.log("BergeVis received links:", links);
+  console.log("BergeVis received nodes:", nodes);
+  console.log("BergeVis received links:", links);
 
-  const Complete = () => {
-    toast.success("Done! Verify Cover! 🎉", {
+  const Complete=()=>{
+    toast.success("Done! Verify Cover! 🎉",{
       position: "top-center",
       autoClose: 3000, // 3 seconds
       hideProgressBar: false,
@@ -25,11 +26,10 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
       pauseOnHover: true,
       draggable: true,
       theme: "dark",
-    });
-  };
-
-  const Warn = () => {
-    toast.error("NO Steps Before!", {
+    })
+  }
+  const Warn=()=>{
+    toast.error("NO Steps Before!",{
       position: "top-center",
       autoClose: 3000, // 3 seconds
       hideProgressBar: false,
@@ -37,11 +37,12 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
       pauseOnHover: true,
       draggable: true,
       theme: "dark",
-    });
-  };
+      // theme: "colored",
+    })
+  }
 
-  const Reset = () => {
-    toast.info("Reset Done ", {
+  const Reset=()=>{
+    toast.info("Reset Done ",{
       position: "top-center",
       autoClose: 3000, // 3 seconds
       hideProgressBar: false,
@@ -49,97 +50,65 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
       pauseOnHover: true,
       draggable: true,
       theme: "dark",
-    });
-  };
-
-  // Normalize an edge to ensure consistent source-target reference
-  // const normalizeEdge = (edge) => {
-  //   const sourceId = edge.source.id || edge.source;
-  //   const targetId = edge.target.id || edge.target;
-  //   return { sourceId, targetId };
-  // };
+      // theme: "colored",
+    })
+  }
+  // console.log("nodes",nodes);
+  // console.log("links",links);
 
   // Helper function to find edge between two nodes
   const findEdge = (sourceId, targetId) => {
     return links.find(
-      (link) => {
-        const linkSourceId = link.source.id;
-        const linkTargetId = link.target.id;
-        return (
-          (linkSourceId === sourceId && linkTargetId === targetId) ||
-          (linkSourceId === targetId && linkTargetId === sourceId)
-        );
-      }
+      (link) => 
+        (link.source.id === sourceId && link.target.id === targetId) || 
+        (link.source.id === targetId && link.target.id === sourceId)
     );
   };
 
   // Helper function to check if a node is matched in the current matching
   const isMatched = (nodeId, currentMatching) => {
-    return currentMatching.some((edge) => {
-      const sourceId = edge.source.id;
-      const targetId = edge.target.id;
-      return sourceId === nodeId || targetId === nodeId;
-    });
+    return currentMatching.some(
+      (edge) => edge.source.id === nodeId || edge.target.id === nodeId
+    );
   };
 
   // Helper function to get the matched partner of a node
   const getMatchedPartner = (nodeId, currentMatching) => {
-    const matchedEdge = currentMatching.find((edge) => {
-      const sourceId = edge.source.id;
-      const targetId = edge.target.id;
-      return sourceId === nodeId || targetId === nodeId;
-    });
-    
+    const matchedEdge = currentMatching.find(
+      (edge) => edge.source.id === nodeId || edge.target.id === nodeId
+    );
     if (!matchedEdge) return null;
-    
-    const sourceId = matchedEdge.source.id;
-    const targetId = matchedEdge.target.id;
-    
-    return sourceId === nodeId ? targetId : sourceId;
+    return matchedEdge.source.id === nodeId ? matchedEdge.target.id : matchedEdge.source.id;
   };
 
   // Modified DFS implementation for finding augmenting paths
   const dfs = (nodeId, visited, currentMatching, path) => {
     if (visited.has(nodeId)) return false;
-
+    
     visited.add(nodeId);
     path.push(nodeId);
-
+    // console.log("a1")
+    
     // Get node object
-    const node = nodes.find((n) => n.id === nodeId);
-    if (!node) {
-      console.error("Node not found:", nodeId);
-      path.pop();
-      return false;
-    }
-
+    const node = nodes.find(n => n.id === nodeId);
+    
     // If node is in group A, look for adjacent nodes in group B
     if (node.group === "A") {
       // Find all connected nodes in group B
       const adjacentNodes = links
-        .filter((link) => {
-          const sourceId = link.source.id;
-          const targetId = link.target.id;
-          return sourceId === nodeId || targetId === nodeId;
-        })
-        .map((link) => {
-          const sourceId = link.source.id;
-          const targetId = link.target.id;
-          return sourceId === nodeId ? targetId : sourceId;
-        })
-        .filter((id) => {
-          const adjacentNode = nodes.find((n) => n.id === id);
-          return adjacentNode && adjacentNode.group === "B";
-        });
-
+        .filter(link => link.source.id === nodeId || link.target.id === nodeId)
+        .map(link => link.source.id === nodeId ? link.target.id : link.source.id)
+        .filter(id => nodes.find(n => n.id === id).group === "B");
+      
       for (const adjacentId of adjacentNodes) {
         path.push(adjacentId);
 
         // If adjacent node is unmatched, we found an augmenting path
         if (!isMatched(adjacentId, currentMatching)) {
+          // console.log("B")
           return true;
         }
-
+        
         // If adjacent node is matched, continue DFS through its partner
         const partnerId = getMatchedPartner(adjacentId, currentMatching);
         if (partnerId && !visited.has(partnerId)) {
@@ -147,11 +116,11 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
             return true;
           }
         }
-
+        
         // Remove adjacent node from path if no augmenting path found through it
         path.pop();
       }
-    }
+    } 
     // If node is in group B, look for the matched node in group A (if any)
     else if (node.group === "B") {
       const partnerId = getMatchedPartner(nodeId, currentMatching);
@@ -161,7 +130,7 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
         }
       }
     }
-
+    
     // Remove current node from path if no augmenting path found
     path.pop();
     return false;
@@ -174,7 +143,7 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
       if (node.group === "A" && !isMatched(node.id, currentMatching)) {
         const visited = new Set();
         const path = [];
-
+        
         if (dfs(node.id, visited, currentMatching, path)) {
           return path;
         }
@@ -187,205 +156,200 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
   // compute the new matching state.
   const computeNewMatching = (path, currentMatching) => {
     if (!path || path.length < 2) return currentMatching;
-
+    
     // Create a copy of the current matching
     const newMatching = [...currentMatching];
-
-    // Process the augmenting path in pairs
+    
+    // Process the augmenting path
     for (let i = 0; i < path.length - 1; i += 2) {
       const u = path[i];
       const v = path[i + 1];
-
-      // Find edge between u and v in the graph
+      
+      // Find edge between u and v
       const edge = findEdge(u, v);
-      if (!edge) {
-        console.error("Edge not found between", u, "and", v);
-        continue;
-      }
-
-      // Check if this edge is already in the matching
-      const matchedIndex = newMatching.findIndex((e) => {
-        const sourceId = e.source.id;
-        const targetId = e.target.id;
-        return (
-          (sourceId === u && targetId === v) ||
-          (sourceId === v && targetId === u)
+      
+      if (edge) {
+        // If this edge is in the matching, remove it
+        const matchedIndex = newMatching.findIndex(
+          e => (e.source.id === u && e.target.id === v) || 
+               (e.source.id === v && e.target.id === u)
         );
-      });
-
-      if (matchedIndex !== -1) {
-        // Remove edge from matching
-        newMatching.splice(matchedIndex, 1);
-      } else {
-        // Add edge to matching
-        newMatching.push(edge);
+        
+        if (matchedIndex !== -1) {
+          newMatching.splice(matchedIndex, 1);
+        } else {
+          // Otherwise add it to the matching
+          newMatching.push(edge);
+        }
       }
-      console.log("nn",newMatching);
-
+      
       // If there's a next pair (v, w) in the path
       if (i + 2 < path.length) {
         const w = path[i + 2];
         const nextEdge = findEdge(v, w);
-
+        
         if (nextEdge) {
           // If this edge is in the matching, remove it
-          const matchedIndex = newMatching.findIndex((e) => {
-            const sourceId = e.source.id;
-            const targetId = e.target.id;
-            return (
-              (sourceId === v && targetId === w) ||
-              (sourceId === w && targetId === v)
-            );
-          });
-
+          const matchedIndex = newMatching.findIndex(
+            e => (e.source.id === v && e.target.id === w) || 
+                 (e.source.id === w && e.target.id === v)
+          );
+          
           if (matchedIndex !== -1) {
             newMatching.splice(matchedIndex, 1);
           }
         }
       }
     }
-
+    
     return newMatching;
   };
 
   // Precompute all steps of the algorithm
   const precomputeSteps = () => {
-    if (!nodes.length || !links.length) {
-      setPrecomputedPaths([]);
-      setPrecomputedMatchings([[]]);
-      return;
-    }
-
     let currentMatching = [];
     const paths = [];
     const matchings = [];
-
-    // Initial state - empty matching
+    
+    // Initial state
     matchings.push([]);
-
-    // Maximum iterations to prevent infinite loop
-    // const maxIterations = Math.min(nodes.length, 100);
-    // let iterations = 0;
-
-    // Continue finding augmenting paths until none exist or max iterations reached
+    
     while (true) {
-      // iterations++;
-      
       const path = computeAugmentingPath(currentMatching);
-      console.log("Found path:", path);
-      
-      if (path && path.length >= 2) {
+      console.log("path",path)
+      if (path) {
         paths.push(path);
-        const newMatching = computeNewMatching(path, currentMatching);
-        currentMatching = newMatching;
-        matchings.push([...newMatching]);
-        // console.log("Updated matching:", newMatching);
+        currentMatching = computeNewMatching(path, currentMatching);
+        // console.log("CurrentMatching",currentMatching)
+        // Store a deep copy of currentMatching at this step
+        matchings.push([...currentMatching]);
+        // console.log("matching",matchings);
       } else {
-        // No more augmenting paths found
         break;
       }
     }
-
-    // console.log("Final precomputed paths:", paths);
-    // console.log("Final precomputed matchings:", matchings);
     
     setPrecomputedPaths(paths);
     setPrecomputedMatchings(matchings);
-    
-    // Immediately send the final matching to the parent component
-    // if (onFinalMatching && matchings.length > 0) {
-    //   onFinalMatching(matchings[matchings.length - 1]);
+    // console.log("prec_matchings", matchings);
+    // console.log("type",typeof(precomputedMatchings));
+    // console.log("prec_paths", paths);
+    // if (onFinalMatching && matchings.length>0){
+    //   console.log("hahahaha")
+    //   onFinalMatching(matchings[matchings.length-1]);
     // }
   };
 
   // Precompute steps when the graph changes or on component mount
   useEffect(() => {
-    console.log("Graph changed, recomputing steps. Version:", graphVersion);
-    // Reset state
+    precomputeSteps();
+    //Also reset step counter and state if graph changes
     setStep(0);
     setMatching([]);
     setAugmentingPath([]);
-    
-    // Delay precomputation slightly to ensure state is updated
-    setTimeout(() => {
-      precomputeSteps();
-    }, 10);
-  }, [graph, graphVersion]);
+  }, [graph,graphVersion]);
 
-  // Instead of computing on each click, simply show the precomputed step
+  // useEffect(() => {
+  //   if (onFinalMatching && precomputedMatchings.length > 0) {
+  //     console.log("hahahaha");
+  //     onFinalMatching(precomputedMatchings[precomputedMatchings.length - 1]);
+  //   }
+  // }, [precomputedMatchings, onFinalMatching]);
+
+
+  // Instead of computing on each click, simply show the precomputed step.
   const handleNextStep = () => {
-    if (step < 2 * precomputedPaths.length) {
-      if (step % 2 === 0) {
-        setAugmentingPath(precomputedPaths[step / 2]);
-        if (step >= 2) {
-          setMatching(precomputedMatchings[(step - 2) / 2 + 1]);
-        } else {
-          setMatching([]);
-        }
-        setStep(step + 1);
-      } else if (step % 2 === 1) {
-        setMatching(precomputedMatchings[(step - 1) / 2 + 1]); // Use next matching
-        setAugmentingPath(precomputedPaths[(step - 1) / 2]);
+    if (step < 2*precomputedPaths.length) {
+
+      if (step%2 == 0){
+        setAugmentingPath(precomputedPaths[step/2]);
+        setMatching(precomputedMatchings[ ( (step-2) / 2) + 1]);
         setStep(step + 1);
       }
-    } else if (step === 2 * precomputedPaths.length) {
+
+      if (step%2 == 1){
+        setMatching(precomputedMatchings[ ( (step-1) / 2) + 1]); // Use next matching since we've already applied the path
+        setAugmentingPath(precomputedPaths[(step-1)/2]);
+        setStep(step + 1);
+      }
+
+      // setStep(step + 1);
+    }
+
+    else if (step == 2 * precomputedPaths.length) {
       setAugmentingPath([]);
-      setMatching(precomputedMatchings[precomputedMatchings.length - 1]);
+      setMatching(precomputedMatchings[precomputedMatchings.length - 1]); 
       setStep(step + 1);
-    } else {
-      if (onFinalMatching && precomputedMatchings.length > 0) {
-        onFinalMatching(precomputedMatchings[precomputedMatchings.length - 1]);
+    }
+    else{
+      if (onFinalMatching && precomputedMatchings.length>0){
+        // console.log("hahahaha")
+        onFinalMatching(precomputedMatchings[precomputedMatchings.length-1]);
       }
+      // alert("Maximum matching reached! Visualization Completed");
       Complete();
     }
   };
 
+
+  
+  
   const handlePreviousStep = () => {
     let newStep = step - 1;
 
-    if (newStep >= 2 * precomputedPaths.length) {
-      newStep = 2 * precomputedPaths.length - 1;
+    if (newStep >= 2*precomputedPaths.length) {
+      newStep = 2*precomputedPaths.length - 1;
     }
+    
 
     if (newStep >= 0) {
       setStep(newStep);
 
-      if (newStep === 0) {
+      if (newStep == 0){
         setAugmentingPath([]);
         setMatching([]);
-      } else if (newStep === 1) {
+      } 
+      else if (newStep == 1){
         setAugmentingPath(precomputedPaths[0]);
         setMatching([]);
-      } else if (newStep % 2 === 0) {
-        setAugmentingPath(precomputedPaths[newStep / 2 - 1]);
-        setMatching(precomputedMatchings[(newStep - 2) / 2 + 1]);
-      } else {
-        setMatching(precomputedMatchings[(newStep - 1) / 2]);
-        setAugmentingPath(precomputedPaths[(newStep - 1) / 2]);
       }
-    } else {
+
+      else if (newStep%2 == 0){
+        setAugmentingPath(precomputedPaths[newStep/2 - 1]);
+        setMatching(precomputedMatchings[ ( (newStep-2) / 2) + 1]);
+    
+      }
+      else {
+        setMatching(precomputedMatchings[ ( (newStep-1) / 2) ]); 
+        setAugmentingPath(precomputedPaths[(newStep-1)/2]);
+      }
+
+      // setStep(step + 1);
+    }
+    else{
       Warn();
     }
   };
+  
+  
 
   const handleReset = () => {
     setStep(0);
     setMatching([]);
     setAugmentingPath([]);
     precomputeSteps();
-    onFinalMatching([]);
+    onFinalMatching([])
     Reset();
+
   };
 
+  
   useEffect(() => {
     const width = 600,
       height = 400;
     const svg = d3.select(svgRef.current).attr("width", width).attr("height", height);
 
     svg.selectAll("*").remove();
-
-    // Skip rendering if no nodes or links
-    if (!nodes.length) return;
 
     const simulation = d3
       .forceSimulation(nodes)
@@ -408,11 +372,10 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
       .enter()
       .append("line")
       .attr("stroke", (d) => {
-        // Get consistent IDs
+        // Check if this edge is part of the augmenting path
         const sourceId = d.source.id || d.source;
         const targetId = d.target.id || d.target;
         
-        // Check if this edge is part of the augmenting path
         const isInPath = augmentingPath.length >= 2 && augmentingPath.some((id, index) => {
           if (index === augmentingPath.length - 1) return false;
           const u = augmentingPath[index];
@@ -420,19 +383,21 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
           return (u === sourceId && v === targetId) || (u === targetId && v === sourceId);
         });
         
+        
         // Check if this edge is in the current matching
-        const isInMatching = matching.some((e) => {
-          const matchSourceId = e.source.id;
-          const matchTargetId = e.target.id;
-          return (
-            (matchSourceId === sourceId && matchTargetId === targetId) ||
-            (matchSourceId === targetId && matchTargetId === sourceId)
-          );
-        });
+        const isInMatching = matching.some(
+          (e) => 
+            (e.source.id === sourceId && e.target.id === targetId) || 
+            (e.source.id === targetId && e.target.id === sourceId)
+        );
 
         if (isInMatching && isInPath) return "green";
+        
         if (isInMatching) return "red";
+
         if (isInPath) return "#9013FE";
+
+
         return "#999";
       })
       .attr("stroke-width", 2);
@@ -471,68 +436,40 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
     });
   }, [nodes, links, matching, augmentingPath, step]);
 
-  const formatID=(id)=>(  //not using return as not using {} parathesis
-    <>
-      {id[0]}
-      <sub>
-        {id.slice(1)}
-      </sub>
-    </>
-  )
-
+  
   return (
     <div>
       <svg ref={svgRef} style={{ border: "2px solid black" }}></svg>
-      <ToastContainer />
-      <div
-        style={{
-          marginTop: "20px",
-          display: "flex",
-          gap: "10px",
-          justifyContent: "center",
-        }}
-      >
+      <ToastContainer/>
+      <div style={{ marginTop: "20px", display: "flex", gap: "10px",
+                   justifyContent: "center" }}>
         <button onClick={handleNextStep}>Next Step</button>
+      
         <button onClick={() => handlePreviousStep()}>Previous Step</button>
+
+
         <button onClick={handleReset}>Reset</button>
+
       </div>
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <h3>Step {step}</h3>
         <p>
-          {augmentingPath.length > 0 ? (
-            <>
-              Augmenting path found:&nbsp;
-              {
-                augmentingPath.map((id,index)=>(
-                  <React.Fragment key={index}>
-                    {formatID(id)}
-                    {index!==augmentingPath.length-1 && " -> "}
-                  </React.Fragment>
-                ))
-              }
-            </>
-
-          ) : (
-            "No augmenting path found yet. Click 'Next Step' to start."
-            )}
+          {augmentingPath.length > 0
+            ? `Augmenting path found: ${augmentingPath.join(" -> ")}`
+            : "No augmenting path found yet. Click 'Next Step' to start."}
         </p>
         <p>
           Current matching size: {matching.length}
           {matching.length > 0 && (
             <span>
-              {" ("}
-              {matching.map((edge,index) => {
-                  const sourceId = edge.source.id;
-                  const targetId = edge.target.id;
-                  return (
-                    <span key={index}>
-                      {formatID(sourceId)}-{formatID(targetId)}
-                      {index!==matching.length - 1 && ", "}
-                    </span>
-                  );
-              
-              })}
-              {")"}
+              {" "}
+              (
+              {matching
+                .map(
+                  (edge) => `${edge.source.id || edge.source}-${edge.target.id || edge.target}`
+                )
+                .join(", ")}
+              )
             </span>
           )}
         </p>
@@ -540,5 +477,7 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
     </div>
   );
 };
+
+
 
 export default BergeVisualization;

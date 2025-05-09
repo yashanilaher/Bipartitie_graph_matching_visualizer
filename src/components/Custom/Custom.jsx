@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import BergeVisualization from "../BergeVisualization/BergeVisualization";
 import "./Custom.css";
 import VertexCoverVisualization from "../BergeVisualization/VertexCoverVisualization";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 function BipartiteGraph() {
     const svgRef = useRef();
@@ -11,79 +11,113 @@ function BipartiteGraph() {
     const [links, setLinks] = useState([]);
     const [fromNode, setFromNode] = useState("");
     const [toNode, setToNode] = useState("");
-    const [currentMatching,setCurrentMatching]=useState([]);
-    const [point,setPoint]=useState(0);
-    const [graphVersion, setGraphVersion] = useState(0)
+    const [currentMatching, setCurrentMatching] = useState([]);
+    const [point, setPoint] = useState(0);
+    const [graphVersion, setGraphVersion] = useState(0);
 
-    const Warn1=()=>{
-        toast.error("Please Enter Valid Nodes!",{
-          position: "top-center",
-          autoClose: 3000, // 3 seconds
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "dark",
-          // theme: "colored",
-        })
-      }
+    const Warn1 = () => {
+        toast.error("Please Enter Valid Nodes!", {
+            position: "top-center",
+            autoClose: 3000, // 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "dark",
+        });
+    };
 
-    const Warn2=()=>{
-        toast.info("Edge already exists!!",{
-          position: "top-center",
-          autoClose: 3000, // 3 seconds
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "dark",
-          // theme: "colored",
-        })
-      }
+    const Warn2 = () => {
+        toast.info("Edge already exists!!", {
+            position: "top-center",
+            autoClose: 3000, // 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "dark",
+        });
+    };
 
-    
+    // Helper function to get node position (or generate one if new)
+    const getNodePosition = (nodeId, group) => {
+        const existingNode = nodes.find(n => n.id === nodeId);
+        if (existingNode) {
+            return { x: existingNode.x, y: existingNode.y };
+        }
+        
+        // Generate position based on which group the node belongs to
+        const width = 600;
+        const height = 400;
+        
+        if (group === "A") {
+            // Left side positioning
+            return {
+                x: width * 0.25 + Math.random() * (width * 0.2),
+                y: height * 0.2 + Math.random() * (height * 0.6)
+            };
+        } else {
+            // Right side positioning
+            return {
+                x: width * 0.55 + Math.random() * (width * 0.2),
+                y: height * 0.2 + Math.random() * (height * 0.6)
+            };
+        }
+    };
 
     const handleAddEdge = () => {
         if (!fromNode || !toNode) {
             Warn1();
             return;
         }
-        if ((fromNode[0]!='a' && fromNode[0]!='b') || (toNode[0]!='a' && toNode[0]!='b') || (fromNode[0]==toNode[0])){
-            Warn1();
-            return;
-        }
 
-        const fromNodeExists = nodes.some((node) => node.id === fromNode);
-        const toNodeExists = nodes.some((node) => node.id === toNode);
+        // Check if edge already exists
         const edgeExists = links.some(
-            (edge) => edge.source.id === fromNode && edge.target.id === toNode
+            (edge) => 
+                (edge.source.id === `a${fromNode}` && edge.target.id === `b${toNode}`) ||
+                (edge.source === `a${fromNode}` && edge.target === `b${toNode}`)
         );
 
         if (edgeExists) {
             Warn2();
-            // alert("Edge already exists!");
             return;
         }
 
+        // Check if nodes exist and add them if they don't
+        const fromNodeId = `a${fromNode}`;
+        const toNodeId = `b${toNode}`;
+        
+        const fromNodeExists = nodes.some((node) => node.id === fromNodeId);
+        const toNodeExists = nodes.some((node) => node.id === toNodeId);
+        
+        let updatedNodes = [...nodes];
+        
         if (!fromNodeExists) {
-            setNodes((prevNodes) => [
-                ...prevNodes,
-                { id: fromNode, group: fromNode.startsWith("a") ? "A" : "B" },
-            ]);
+            const fromPosition = getNodePosition(fromNodeId, "A");
+            updatedNodes.push({ 
+                id: fromNodeId, 
+                group: "A",
+                x: fromPosition.x,
+                y: fromPosition.y
+            });
         }
 
         if (!toNodeExists) {
-            setNodes((prevNodes) => [
-                ...prevNodes,
-                { id: toNode, group: toNode.startsWith("b") ? "B" : "A" },
-            ]);
+            const toPosition = getNodePosition(toNodeId, "B");
+            updatedNodes.push({ 
+                id: toNodeId, 
+                group: "B",
+                x: toPosition.x,
+                y: toPosition.y
+            });
         }
 
-        setLinks((prevLinks) => [...prevLinks, { source: fromNode, target: toNode }]);
-
+        setNodes(updatedNodes);
+        setLinks((prevLinks) => [...prevLinks, { source: fromNodeId, target: toNodeId }]);
         setFromNode("");
         setToNode("");
-        setGraphVersion((prev)=>(prev+1));
+        setGraphVersion((prev) => (prev + 1));
+        setCurrentMatching([]);
     };
 
     useEffect(() => {
@@ -94,106 +128,162 @@ function BipartiteGraph() {
             .style("border", "1px solid #ccc")
             .on("click", handleSvgClick);
     
+        // Clear existing elements
         svg.selectAll("*").remove();
     
-        let selectedNode = null;
-    
-        // Setup simulation
+        // Create simulation for better node positions
         const simulation = d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id).distance(100))
-            .force("charge", d3.forceManyBody().strength(-200))
-            .force("center", d3.forceCenter(width / 2, height / 2));
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("x", d3.forceX().x(d => d.group === "A" ? width * 0.25 : width * 0.75).strength(0.7))
+            .force("y", d3.forceY(height / 2).strength(0.1))
+            .stop();
+        
+        // Run simulation a few times to get better initial positions
+        simulation.tick(30);
     
+        // Draw links
         const link = svg.selectAll(".link")
             .data(links)
             .enter()
             .append("line")
             .attr("class", "link")
             .attr("stroke", "#aaa")
-            .attr("stroke-width", 2);
-
-        const node = svg.selectAll(".node")
+            .attr("stroke-width", 2)
+            .attr("x1", d => {
+                const src = nodes.find(n => n.id === d.source.id || n.id === d.source);
+                return src?.x || 0;
+            })
+            .attr("y1", d => {
+                const src = nodes.find(n => n.id === d.source.id || n.id === d.source);
+                return src?.y || 0;
+            })
+            .attr("x2", d => {
+                const tgt = nodes.find(n => n.id === d.target.id || n.id === d.target);
+                return tgt?.x || 0;
+            })
+            .attr("y2", d => {
+                const tgt = nodes.find(n => n.id === d.target.id || n.id === d.target);
+                return tgt?.y || 0;
+            });
+    
+        // Draw nodes
+        const circle = svg.selectAll(".node")
             .data(nodes)
             .enter()
             .append("circle")
             .attr("class", "node")
-            .attr("r", 15)
+            .attr("r", 17)
             .attr("fill", d => d.group === "A" ? "#4A90E2" : "#F5A623")
-            .on("click", (event, d) => {
-                event.stopPropagation(); // prevent SVG click
-                if (!selectedNode) {
-                    selectedNode = d;
-                } else if (selectedNode.id !== d.id) {
-                    setLinks(prev => [...prev, { source: selectedNode.id, target: d.id }]);
-                    selectedNode = null;
-                } else {
-                    selectedNode = null; // deselect if clicked same
-                }
-            });
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .call(drag(simulation)); // Make nodes draggable
     
-        const label = svg.selectAll(".label")
+        // Draw labels
+        const text = svg.selectAll(".label")
             .data(nodes)
             .enter()
             .append("text")
-            .attr("dx", -5)
+            .attr("class", "label")
+            .attr("dx", -10)
             .attr("dy", 5)
             .text(d => d.id)
-            .style("font-size", "14px");
-    
+            .attr("x", d => d.x)
+            .attr("y", d => d.y);
+        
+        // Update positions if simulation changes
         simulation.on("tick", () => {
             link
-                .attr("x1", d => d.source.x)
-                .attr("y1", d => d.source.y)
-                .attr("x2", d => d.target.x)
-                .attr("y2", d => d.target.y);
+                .attr("x1", d => {
+                    const src = nodes.find(n => n.id === d.source.id || n.id === d.source);
+                    return src?.x || 0;
+                })
+                .attr("y1", d => {
+                    const src = nodes.find(n => n.id === d.source.id || n.id === d.source);
+                    return src?.y || 0;
+                })
+                .attr("x2", d => {
+                    const tgt = nodes.find(n => n.id === d.target.id || n.id === d.target);
+                    return tgt?.x || 0;
+                })
+                .attr("y2", d => {
+                    const tgt = nodes.find(n => n.id === d.target.id || n.id === d.target);
+                    return tgt?.y || 0;
+                });
     
-            node
+            circle
                 .attr("cx", d => d.x)
                 .attr("cy", d => d.y);
     
-            label
+            text
                 .attr("x", d => d.x)
                 .attr("y", d => d.y);
         });
     
-        function handleSvgClick(event) {
-            const coords = d3.pointer(event);
-            let newId = `n${nodes.length}`;
-            let newGroup="";
-            if (point%2==0){
-                newId=`a${point/2}`;
-                newGroup="A";
+        // Define drag function for nodes
+        function drag(simulation) {
+            function dragstarted(event) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                event.subject.fx = event.subject.x;
+                event.subject.fy = event.subject.y;
             }
-            else{
-                newId=`b${(point-1)/2}`;
-                newGroup="B";
+            
+            function dragged(event) {
+                event.subject.fx = event.x;
+                event.subject.fy = event.y;
             }
-            setPoint((prev)=>(prev+1));
-            // const newGroup = nodes.length % 2 === 0 ? "A" : "B";
-            const newNode = { id: newId, group: newGroup, x: coords[0], y: coords[1] };
-            setNodes(prev => [...prev, newNode]);
-            setGraphVersion((prev) => prev + 1); // Increment graphVersion after adding edge
-            setCurrentMatching([]);
+            
+            function dragended(event) {
+                if (!event.active) simulation.alphaTarget(0);
+                event.subject.fx = null;
+                event.subject.fy = null;
+                
+                // Update node positions in the state
+                const updatedNodes = nodes.map(node => {
+                    if (node.id === event.subject.id) {
+                        return { ...node, x: event.subject.x, y: event.subject.y };
+                    }
+                    return node;
+                });
+                setNodes(updatedNodes);
+            }
+            
+            return d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended);
         }
     
+        // Click on canvas to add new node
+        function handleSvgClick(event) {
+            const coords = d3.pointer(event);
+            const [x, y] = coords;
+            const isLeft = x < width / 2;
+    
+            const newGroup = isLeft ? "A" : "B";
+            const aCount = nodes.filter(n => n.group === "A").length;
+            const bCount = nodes.filter(n => n.group === "B").length;
+            
+            const newId = isLeft ? `a${aCount}` : `b${bCount}`;
+            const newNode = { id: newId, group: newGroup, x, y };
+            
+            setNodes(prev => [...prev, newNode]);
+            setGraphVersion(prev => prev + 1);
+            setCurrentMatching([]);
+        }
     }, [nodes, links]);
 
-    const onFinalMatching=(matching)=>{
-        setCurrentMatching((prev)=>{
-            const isDiff=JSON.stringify(prev)!=JSON.stringify(matching);
-            if (isDiff){
-                console.log("Received Current Matching",matching);
+    const onFinalMatching = (matching) => {
+        setCurrentMatching((prev) => {
+            const isDiff = JSON.stringify(prev) != JSON.stringify(matching);
+            if (isDiff) {
+                console.log("Received Current Matching", matching);
                 return matching;
-            }
-            else{
+            } else {
                 return prev;
             }
-        })
-        // setCurrentMatching(matching);
-    }
-    
-    console.log("nodes",nodes);
-    console.log("links",links);
+        });
+    };
 
     return (
         <>
@@ -204,37 +294,41 @@ function BipartiteGraph() {
                     <div className="left-container">
                         <div className="form-container">
                             <label>
-                                From Node (Part A):
+                                Node (Part A):  
                                 <input
                                     type="text"
                                     value={fromNode}
                                     onChange={(e) => setFromNode(e.target.value)}
-                                    placeholder="e.g., a1"
+                                    placeholder="Enter Node"
                                 />
                             </label>
                             <label>
-                                To Node (Part B):
+                                Node (Part B):
                                 <input
                                     type="text"
                                     value={toNode}
                                     onChange={(e) => setToNode(e.target.value)}
-                                    placeholder="e.g., b1"
+                                    placeholder="Enter Node"
                                 />
                             </label>
                             <button onClick={handleAddEdge}>Add Edge</button>
                         </div>
                         <svg ref={svgRef} className="graph"></svg>
                         <h2>Berge Algorithm Visualization</h2>
-                        <BergeVisualization graph={{ nodes, links }} onFinalMatching={onFinalMatching} graphVersion={graphVersion} />
+                        <BergeVisualization 
+                            graph={{ nodes, links }} 
+                            onFinalMatching={onFinalMatching} 
+                            graphVersion={graphVersion} 
+                        />
                         <div className="legend-line">
                             <span className="legend-item">
-                            <span className="legend-dot purple-dot"></span> Augmenting Path
+                                <span className="legend-dot purple-dot"></span> Augmenting Path
                             </span>
                             <span className="legend-item">
-                            <span className="legend-dot green-dot"></span> Matching in Augmenting Path
+                                <span className="legend-dot green-dot"></span> Matching in Augmenting Path
                             </span>
                             <span className="legend-item">
-                            <span className="legend-dot red-dot"></span> Matching
+                                <span className="legend-dot red-dot"></span> Matching
                             </span>
                         </div>
                     </div>
@@ -242,18 +336,19 @@ function BipartiteGraph() {
                     {/* Right Side: Reserved for Future Work */}
                     <div className="right-container">
                         <h1 className="g1-placeholder">Vertex Cover</h1>
-                        {currentMatching.length===0 ? (
-                        <div style={{marginTop:"20px",fontStyle:"italic",color:"gray"}}>
-                            Please Complete the Visualization to see the vertex cover
-                        </div>
+                        {currentMatching.length === 0 ? (
+                            <div style={{marginTop:"20px", fontStyle:"italic", color:"gray"}}>
+                                Please Complete the Visualization to see the vertex cover
+                            </div>
                         ) : (
-                        <VertexCoverVisualization
-                            graph={{nodes,links}}
-                            maximalMatching={currentMatching}
-                        />
+                            <VertexCoverVisualization
+                                graph={{nodes, links}}
+                                maximalMatching={currentMatching}
+                            />
                         )}
                     </div>
                 </div>
+                {/* <ToastContainer /> */}
             </div>
         </>
     );

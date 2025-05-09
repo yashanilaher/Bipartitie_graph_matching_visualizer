@@ -13,8 +13,8 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
   const [precomputedMatchings, setPrecomputedMatchings] = useState([]);
 
   const { nodes, links } = graph;
-  // console.log("BergeVis received nodes:", nodes);
-  // console.log("BergeVis received links:", links);
+  console.log("BergeVis received nodes:", nodes);
+  console.log("BergeVis received links:", links);
 
   const Complete = () => {
     toast.success("Done! Verify Cover! 🎉", {
@@ -53,18 +53,18 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
   };
 
   // Normalize an edge to ensure consistent source-target reference
-  // const normalizeEdge = (edge) => {
-  //   const sourceId = edge.source.id || edge.source;
-  //   const targetId = edge.target.id || edge.target;
-  //   return { sourceId, targetId };
-  // };
+  const normalizeEdge = (edge) => {
+    const sourceId = edge.source.id || edge.source;
+    const targetId = edge.target.id || edge.target;
+    return { sourceId, targetId };
+  };
 
   // Helper function to find edge between two nodes
   const findEdge = (sourceId, targetId) => {
     return links.find(
       (link) => {
-        const linkSourceId = link.source.id;
-        const linkTargetId = link.target.id;
+        const linkSourceId = link.source.id || link.source;
+        const linkTargetId = link.target.id || link.target;
         return (
           (linkSourceId === sourceId && linkTargetId === targetId) ||
           (linkSourceId === targetId && linkTargetId === sourceId)
@@ -76,8 +76,8 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
   // Helper function to check if a node is matched in the current matching
   const isMatched = (nodeId, currentMatching) => {
     return currentMatching.some((edge) => {
-      const sourceId = edge.source.id;
-      const targetId = edge.target.id;
+      const sourceId = edge.source.id || edge.source;
+      const targetId = edge.target.id || edge.target;
       return sourceId === nodeId || targetId === nodeId;
     });
   };
@@ -85,15 +85,15 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
   // Helper function to get the matched partner of a node
   const getMatchedPartner = (nodeId, currentMatching) => {
     const matchedEdge = currentMatching.find((edge) => {
-      const sourceId = edge.source.id;
-      const targetId = edge.target.id;
+      const sourceId = edge.source.id || edge.source;
+      const targetId = edge.target.id || edge.target;
       return sourceId === nodeId || targetId === nodeId;
     });
     
     if (!matchedEdge) return null;
     
-    const sourceId = matchedEdge.source.id;
-    const targetId = matchedEdge.target.id;
+    const sourceId = matchedEdge.source.id || matchedEdge.source;
+    const targetId = matchedEdge.target.id || matchedEdge.target;
     
     return sourceId === nodeId ? targetId : sourceId;
   };
@@ -118,13 +118,13 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
       // Find all connected nodes in group B
       const adjacentNodes = links
         .filter((link) => {
-          const sourceId = link.source.id;
-          const targetId = link.target.id;
+          const sourceId = link.source.id || link.source;
+          const targetId = link.target.id || link.target;
           return sourceId === nodeId || targetId === nodeId;
         })
         .map((link) => {
-          const sourceId = link.source.id;
-          const targetId = link.target.id;
+          const sourceId = link.source.id || link.source;
+          const targetId = link.target.id || link.target;
           return sourceId === nodeId ? targetId : sourceId;
         })
         .filter((id) => {
@@ -205,8 +205,8 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
 
       // Check if this edge is already in the matching
       const matchedIndex = newMatching.findIndex((e) => {
-        const sourceId = e.source.id;
-        const targetId = e.target.id;
+        const sourceId = e.source.id || e.source;
+        const targetId = e.target.id || e.target;
         return (
           (sourceId === u && targetId === v) ||
           (sourceId === v && targetId === u)
@@ -220,7 +220,6 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
         // Add edge to matching
         newMatching.push(edge);
       }
-      console.log("nn",newMatching);
 
       // If there's a next pair (v, w) in the path
       if (i + 2 < path.length) {
@@ -230,8 +229,8 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
         if (nextEdge) {
           // If this edge is in the matching, remove it
           const matchedIndex = newMatching.findIndex((e) => {
-            const sourceId = e.source.id;
-            const targetId = e.target.id;
+            const sourceId = e.source.id || e.source;
+            const targetId = e.target.id || e.target;
             return (
               (sourceId === v && targetId === w) ||
               (sourceId === w && targetId === v)
@@ -264,12 +263,12 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
     matchings.push([]);
 
     // Maximum iterations to prevent infinite loop
-    // const maxIterations = Math.min(nodes.length, 100);
-    // let iterations = 0;
+    const maxIterations = Math.min(nodes.length, 100);
+    let iterations = 0;
 
     // Continue finding augmenting paths until none exist or max iterations reached
-    while (true) {
-      // iterations++;
+    while (iterations < maxIterations) {
+      iterations++;
       
       const path = computeAugmentingPath(currentMatching);
       console.log("Found path:", path);
@@ -279,23 +278,23 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
         const newMatching = computeNewMatching(path, currentMatching);
         currentMatching = newMatching;
         matchings.push([...newMatching]);
-        // console.log("Updated matching:", newMatching);
+        console.log("Updated matching:", newMatching);
       } else {
         // No more augmenting paths found
         break;
       }
     }
 
-    // console.log("Final precomputed paths:", paths);
-    // console.log("Final precomputed matchings:", matchings);
+    console.log("Final precomputed paths:", paths);
+    console.log("Final precomputed matchings:", matchings);
     
     setPrecomputedPaths(paths);
     setPrecomputedMatchings(matchings);
     
     // Immediately send the final matching to the parent component
-    // if (onFinalMatching && matchings.length > 0) {
-    //   onFinalMatching(matchings[matchings.length - 1]);
-    // }
+    if (onFinalMatching && matchings.length > 0) {
+      onFinalMatching(matchings[matchings.length - 1]);
+    }
   };
 
   // Precompute steps when the graph changes or on component mount
@@ -422,8 +421,8 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
         
         // Check if this edge is in the current matching
         const isInMatching = matching.some((e) => {
-          const matchSourceId = e.source.id;
-          const matchTargetId = e.target.id;
+          const matchSourceId = e.source.id || e.source;
+          const matchTargetId = e.target.id || e.target;
           return (
             (matchSourceId === sourceId && matchTargetId === targetId) ||
             (matchSourceId === targetId && matchTargetId === sourceId)
@@ -471,15 +470,6 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
     });
   }, [nodes, links, matching, augmentingPath, step]);
 
-  const formatID=(id)=>(  //not using return as not using {} parathesis
-    <>
-      {id[0]}
-      <sub>
-        {id.slice(1)}
-      </sub>
-    </>
-  )
-
   return (
     <div>
       <svg ref={svgRef} style={{ border: "2px solid black" }}></svg>
@@ -499,40 +489,24 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <h3>Step {step}</h3>
         <p>
-          {augmentingPath.length > 0 ? (
-            <>
-              Augmenting path found:&nbsp;
-              {
-                augmentingPath.map((id,index)=>(
-                  <React.Fragment key={index}>
-                    {formatID(id)}
-                    {index!==augmentingPath.length-1 && " -> "}
-                  </React.Fragment>
-                ))
-              }
-            </>
-
-          ) : (
-            "No augmenting path found yet. Click 'Next Step' to start."
-            )}
+          {augmentingPath.length > 0
+            ? `Augmenting path found: ${augmentingPath.join(" -> ")}`
+            : "No augmenting path found yet. Click 'Next Step' to start."}
         </p>
         <p>
           Current matching size: {matching.length}
           {matching.length > 0 && (
             <span>
-              {" ("}
-              {matching.map((edge,index) => {
-                  const sourceId = edge.source.id;
-                  const targetId = edge.target.id;
-                  return (
-                    <span key={index}>
-                      {formatID(sourceId)}-{formatID(targetId)}
-                      {index!==matching.length - 1 && ", "}
-                    </span>
-                  );
-              
-              })}
-              {")"}
+              {" "}
+              (
+              {matching
+                .map((edge) => {
+                  const sourceId = edge.source.id || edge.source;
+                  const targetId = edge.target.id || edge.target;
+                  return `${sourceId}-${targetId}`;
+                })
+                .join(", ")}
+              )
             </span>
           )}
         </p>
