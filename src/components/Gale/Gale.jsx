@@ -17,7 +17,10 @@ export default function Gale() {
           <img src={stepImg} alt="Input Case 1" className="gale-card-img" />
           <Link to="/sgraph1" className="gale-btn">Scenario 1</Link>
         </div>
-        {/* add more scenarios later */}
+        <div className="gale-card">
+          <img src={stepImg} alt="Custom Input" className="gale-card-img" />
+          <Link to="/scustom" className="gale-btn">Custom Scenario</Link>
+        </div>
       </div>
     </div>
   );

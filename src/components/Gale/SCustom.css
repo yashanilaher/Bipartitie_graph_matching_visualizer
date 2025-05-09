@@ -1,0 +1,90 @@
+.custom-vis {
+    max-width: 900px;
+    margin: 2rem auto;
+    font-family: sans-serif;
+    color: #333;
+    text-align: center;
+  }
+  
+  .setup {
+    display: inline-flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .setup label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .setup input {
+    width: 60px;
+    margin-top: 0.25rem;
+  }
+  
+  .prefs-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  
+  .prefs-list {
+    background: #f7f7f7;
+    padding: 0.5rem;
+    border-radius: 6px;
+    min-width: 140px;
+    text-align: left;
+  }
+  .prefs-list strong {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .prefs-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+  }
+  .prefs-item span {
+    flex: 1;
+  }
+  .prefs-item button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .prefs-item button:disabled {
+    color: #ccc;
+    cursor: default;
+  }
+  
+  .run-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .status {
+    background: #eef;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+  .status ul {
+    padding-left: 1.2rem;
+  }
+  
+  .controls {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .controls button {
+    padding: 0.4rem 1rem;
+  }
+  
