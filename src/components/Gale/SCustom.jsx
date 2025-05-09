@@ -81,7 +81,9 @@ export default function SCustom() {
                 checked={initialProposer === 'men'}
                 onChange={() => setInitialProposer('men')}
               />
-              Men
+              <div className='names'>
+                Men 
+              </div>
             </label>
             <label>
               <input
@@ -91,79 +93,100 @@ export default function SCustom() {
                 checked={initialProposer === 'women'}
                 onChange={() => setInitialProposer('women')}
               />
-              Women
+              <div className='names'>
+                Women
+              </div>
             </label>
           </div>
         </div>
-        <button className="btn-primary" onClick={handleSetup}>
-          Next &mdash; Arrange Preferences
-        </button>
+        <div className="setup-instructions">
+          <h3>📘 How to Use</h3>
+          <ol>
+            <li>Enter the number of men and women.</li>
+            <li>Select who proposes in the algorithm.</li>
+            <li>Click "Next" to arrange preferences.</li>
+            <li>Use ▲▼ buttons to reorder individual preferences.</li>
+            <li>Run the Gale–Shapley algorithm and observe the matching!</li>
+          </ol>
+        </div>
+        <div className='btn-div'>
+          <button className="btn-primary" onClick={handleSetup}>
+            Next &mdash; Arrange Preferences
+          </button>
+        </div>
       </div>
     );
   }
 
   if (stage === 'prefs') {
-    return (
-      <div className="custom-vis">
-        <h2>Arrange Preferences</h2>
-        <div className="prefs-grid">
-          <div>
-            <h3>Men</h3>
-            {men.map((m) => (
-              <div key={m} className="prefs-list">
-                <strong>{m}</strong>
-                {menPrefs[m].map((w, i) => (
-                  <div key={w} className="prefs-item">
-                    <button
-                      onClick={() => movePref('men', m, i, 'up')}
-                      disabled={i === 0}
-                    >
-                      ▲
-                    </button>
-                    <span>{w}</span>
-                    <button
-                      onClick={() => movePref('men', m, i, 'down')}
-                      disabled={i === menPrefs[m].length - 1}
-                    >
-                      ▼
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div>
-            <h3>Women</h3>
-            {women.map((w) => (
-              <div key={w} className="prefs-list">
-                <strong>{w}</strong>
-                {womenPrefs[w].map((m, i) => (
-                  <div key={m} className="prefs-item">
-                    <button
-                      onClick={() => movePref('women', w, i, 'up')}
-                      disabled={i === 0}
-                    >
-                      ▲
-                    </button>
-                    <span>{m}</span>
-                    <button
-                      onClick={() => movePref('women', w, i, 'down')}
-                      disabled={i === womenPrefs[w].length - 1}
-                    >
-                      ▼
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+  return (
+    <div className="custom-vis prefs-stage">
+      <h2 className="prefs-title">Arrange Preferences</h2>
+      <div className="prefs-grid">
+        <div className="prefs-column">
+          <h3>Men</h3>
+          {men.map((m) => (
+            <div key={m} className="prefs-list">
+              <strong>{m}</strong>
+              {menPrefs[m].map((w, i) => (
+                <div key={w} className="prefs-item">
+                  <button
+                    className="move-btn"
+                    onClick={() => movePref('men', m, i, 'up')}
+                    disabled={i === 0}
+                  >
+                    ▲
+                  </button>
+                  <span className="pref-name">{w}</span>
+                  <button
+                    className="move-btn"
+                    onClick={() => movePref('men', m, i, 'down')}
+                    disabled={i === menPrefs[m].length - 1}
+                  >
+                    ▼
+                  </button>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
+        <div className="prefs-column">
+          <h3>Women</h3>
+          {women.map((w) => (
+            <div key={w} className="prefs-list">
+              <strong>{w}</strong>
+              {womenPrefs[w].map((m, i) => (
+                <div key={m} className="prefs-item">
+                  <button
+                    className="move-btn"
+                    onClick={() => movePref('women', w, i, 'up')}
+                    disabled={i === 0}
+                  >
+                    ▲
+                  </button>
+                  <span className="pref-name">{m}</span>
+                  <button
+                    className="move-btn"
+                    onClick={() => movePref('women', w, i, 'down')}
+                    disabled={i === womenPrefs[w].length - 1}
+                  >
+                    ▼
+                  </button>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="run-btn-wrapper">
         <button onClick={() => setStage('run')} className="run-btn">
           Run Algorithm
         </button>
       </div>
-    );
-  }
+    </div>
+  );
+}
+
 
   // stage === 'run'
   return (
