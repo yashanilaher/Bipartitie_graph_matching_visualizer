@@ -3,6 +3,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Gale.css';
 import stepImg from './step.png'; // a placeholder thumbnail
+import A1 from "./A1.png";
+import A2 from "./A2.png";
+import A3 from "./A3.png";
+import A4 from "./A4.png";
 
 export default function Gale() {
   return (
@@ -15,19 +19,19 @@ export default function Gale() {
       <div className="gale-card-container">
         <div className="gale-non-custom-cards">
           <div className="gale-card">
-            <img src={stepImg} alt="Scenario 1" className="gale-card-img" />
+            <img src={A1} alt="Scenario 1" className="gale-card-img" />
             <Link to="/sgraph1" className="gale-btn">Scenario 1</Link>
           </div>
           <div className="gale-card">
-            <img src={stepImg} alt="Scenario 2" className="gale-card-img" />
+            <img src={A2} alt="Scenario 2" className="gale-card-img" />
             <Link to="/sgraph2" className="gale-btn">Scenario 2</Link>
           </div>
           <div className="gale-card">
-            <img src={stepImg} alt="Scenario 3" className="gale-card-img" />
+            <img src={A3} alt="Scenario 3" className="gale-card-img" />
             <Link to="/sgraph3" className="gale-btn">Scenario 3</Link>
           </div>
           <div className="gale-card">
-            <img src={stepImg} alt="Scenario 4" className="gale-card-img" />
+            <img src={A4} alt="Scenario 4" className="gale-card-img" />
             <Link to="/sgraph4" className="gale-btn">Scenario 4</Link>
           </div>
         </div>

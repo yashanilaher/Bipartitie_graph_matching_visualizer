@@ -37,15 +37,15 @@ const instances = [
     },
     {
         menPrefs: {
+            X: ['B', 'A', 'C', 'D'],
+            Y: ['C', 'B', 'A', 'D'],
+            Z: ['C', 'B', 'D', 'A']
+        },
+        womenPrefs: {
             A: ['X', 'Y', 'Z'],
             B: ['Y', 'X', 'Z'],
             C: ['Y', 'Z', 'X'],
             D: ['X', 'Y', 'Z']
-        },
-        womenPrefs: {
-            X: ['B', 'A', 'C', 'D'],
-            Y: ['C', 'B', 'A', 'D'],
-            Z: ['C', 'B', 'D', 'A']
         },
         initialProposer: 'women',
         description: '4x3 Example with Women Proposing'
