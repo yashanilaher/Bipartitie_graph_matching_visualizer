@@ -650,6 +650,7 @@
 
 import React, { useState, useEffect } from 'react';
 import './S1.css';
+import BergeAlgorithm from '../BergeVisualization/BergeAlgorithm';
 
 export default function GaleVisualizer({
     menPreferences,
@@ -911,9 +912,8 @@ export default function GaleVisualizer({
                 </div>
             </div>
             <div>
-
+                <BergeAlgorithm/>
             </div>
-
         </div>
     );
 }

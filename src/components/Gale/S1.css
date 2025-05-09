@@ -1,7 +1,7 @@
 /* /* /* /* 
 /* container */
 .visualizer {
-  max-width: 800px;
+  width: 900px;
   /* margin: 0 auto; */
   padding: 1rem;
   font-family: sans-serif;
@@ -10,7 +10,7 @@
 
 .MainContainer{
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-around; */
 }
 
 /* header */
