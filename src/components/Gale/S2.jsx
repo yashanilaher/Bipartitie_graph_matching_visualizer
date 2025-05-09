@@ -27,6 +27,7 @@
 
   
 // }
+
 import React from 'react';
 import GaleVisualizer from './GaleVisualizer';
 import { instances } from './StaticInputs'; 
