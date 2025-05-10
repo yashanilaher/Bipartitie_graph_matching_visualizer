@@ -306,13 +306,11 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
     setMatching([]);
     setAugmentingPath([]);
     
-    // Delay precomputation slightly to ensure state is updated
     setTimeout(() => {
       precomputeSteps();
     }, 10);
   }, [graph, graphVersion]);
 
-  // Instead of computing on each click, simply show the precomputed step
   const handleNextStep = () => {
     if (step < 2 * precomputedPaths.length) {
       if (step % 2 === 0) {
