@@ -7,22 +7,24 @@ const GaleAlgorithm = () => {
       <div className="algorithm-card">
         <pre className="algorithm-code">
         <code>
-{`function bergeAlgorithm(graph, matching = []):
-  while (true):
-    // Find an alternating path starting at unmatched vertex in A
-    // ending at unmatched vertex in B
-    path = findAugmentingPath(graph, matching)
-    
-    if path == null:
-      break  // Maximum Matching Reached
-      
-    // Augment: flip matched/unmatched edges along the path
-    // (Remove matched edges in path, add unmatched edges)
-    matching = symmetricDifference(matching, path)
-  
-  return matching
+{
 
-// Berge's Theorem: There no M Augmenting Path for M Matchng`}
+`function galeShapley(menPreference, womenPreference):
+
+   Everyone begins unmatched and has a ranked list of partners they prefer.
+
+    While there is an unmatched proposer with someone left on their list:
+    a. That proposer asks the next person on their list.
+    b. If the person is unmatched or prefers this new proposer over their current
+       match, they say “yes” and form or switch the match.
+    c. Otherwise, they say “no,” and the proposer remains unmatched for now.
+
+   Repeat until no proposer can make any more proposals.
+
+The remaining matches are stable.`
+
+
+}
           </code>
         </pre>
       </div>
