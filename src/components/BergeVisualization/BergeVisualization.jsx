@@ -502,10 +502,10 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
               Augmenting path found:&nbsp;
               {
                 augmentingPath.map((id,index)=>(
-                  <React.Fragment key={index}>
+                  <span key={index}>
                     {formatID(id)}
                     {index!==augmentingPath.length-1 && " -> "}
-                  </React.Fragment>
+                  <span>
                 ))
               }
             </>
