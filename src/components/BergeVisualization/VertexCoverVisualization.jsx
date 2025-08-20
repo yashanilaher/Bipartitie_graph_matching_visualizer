@@ -1,15 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 
-<defs>
-  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-    <feMerge>
-      <feMergeNode in="coloredBlur"/>
-      <feMergeNode in="SourceGraphic"/>
-    </feMerge>
-  </filter>
-</defs>
 
 const VertexCoverVisualization = ({ graph, maximalMatching }) => {
   const svgRef = useRef();
