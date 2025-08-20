@@ -152,15 +152,7 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
         path.pop();
       }
     }
-    // If node is in group B, look for the matched node in group A (if any)
-    else if (node.group === "B") {
-      const partnerId = getMatchedPartner(nodeId, currentMatching);
-      if (partnerId && !visited.has(partnerId)) {
-        if (dfs(partnerId, visited, currentMatching, path)) {
-          return true;
-        }
-      }
-    }
+    
 
     // Remove current node from path if no augmenting path found
     path.pop();
