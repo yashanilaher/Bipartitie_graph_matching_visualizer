@@ -1,1 +1,33 @@
 
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.heading {
+  font-size: 2.5rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.subHeading {
+  font-size: 1.8rem;
+  color: #444;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.paragraph {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.list {
+  margin-left: 20px;
+  list-style-type: disc;
+}
