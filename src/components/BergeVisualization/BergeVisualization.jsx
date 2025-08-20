@@ -505,7 +505,7 @@ const BergeVisualization = ({ graph, onFinalMatching, graphVersion }) => {
                   <span key={index}>
                     {formatID(id)}
                     {index!==augmentingPath.length-1 && " -> "}
-                  <span>
+                  </span>
                 ))
               }
             </>
