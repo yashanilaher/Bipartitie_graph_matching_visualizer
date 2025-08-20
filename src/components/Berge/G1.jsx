@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { useRef, useEffect, useState,useMemo } from "react";
+import { useRef, useEffect, useState } from "react";
 import BergeVisualization from "../BergeVisualization/BergeVisualization";
 // import "./G1.css"; // Add CSS file for layout
 import VertexCoverVisualization from "../BergeVisualization/VertexCoverVisualization";
@@ -61,7 +61,6 @@ const G1 = () => {
   //   { source: "a6", target: "b4" },
   // ]);
 
-  const graph=useMemo(()=>({nodes,links}),[nodes,links]);
 
   useEffect(() => {
     const width = 600,
